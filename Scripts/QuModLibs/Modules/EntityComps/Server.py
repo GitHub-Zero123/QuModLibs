@@ -16,7 +16,8 @@ lambda: "By Zero123"
 _USE_SAVE_KEY = "{}_QComps".format(ModDirName)
 universalObject = UniversalObject()
 
-_gameComp = serverApi.GetEngineCompFactory().CreateGame(levelId)
+# _gameComp = serverApi.GetEngineCompFactory().CreateGame(levelId)
+_compFactory = serverApi.GetEngineCompFactory()
 
 class QEntityCompService(BaseService):
     def __init__(self):
@@ -29,15 +30,17 @@ class QEntityCompService(BaseService):
         """ 获取实体是否处于内存状态中 """
         # comp = serverApi.GetEngineCompFactory().CreateModAttr(entityId)
         # return comp.GetAttr(_USE_SAVE_KEY, None) != None
-        return _gameComp.IsEntityAlive(entityId)
+        # return _gameComp.IsEntityAlive(entityId)
+        return bool(_compFactory.CreatePos(entityId).GetPos())
 
     def getEntityRuntime(self, entityId=""):
         """ 获取实体运行时管理对象 """
         if self._closeState:
             # 游戏关闭后为确保资源安全将无法再次获取实体运行时数据
             return None
-        alive = _gameComp.IsEntityAlive(entityId)
-        if not alive:
+        # alive = _gameComp.IsEntityAlive(entityId)
+        hasEntity = self.getMemoryLiveState(entityId)
+        if not hasEntity:
             return None
         if not entityId in self.entityCompMap:
             # ========== 初始化实体资源数据 ==========
@@ -259,8 +262,9 @@ class QBaseEntityComp(_QBaseEntityComp):
     def bind(self, entityId=""):
         if self.entityId:
             return False
-        alive = _gameComp.IsEntityAlive(entityId)
-        if not alive or not self._preVerification(entityId):
+        # alive = _gameComp.IsEntityAlive(entityId)
+        hasEntity = bool(_compFactory.CreatePos(entityId).GetPos())
+        if not hasEntity or not self._preVerification(entityId):
             return False
         self.entityId = entityId
         self.entityObj = Entity(entityId)
