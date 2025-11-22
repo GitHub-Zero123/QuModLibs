@@ -23,9 +23,9 @@ class CustomEngineEvent:
         self.priority = priority
 
 NAMESPACE = "Qu_" + ModDirName
-SYSTEMNAME = "{}_QLoader_system".format(ModDirName)
-SERVER_CALL_EVENT = "{}_QServer".format(ModDirName)
-CLIENT_CALL_EVENT = "{}_QClient".format(ModDirName)
+SYSTEMNAME = ModDirName + "::QLoaderSystem"
+SERVER_CALL_EVENT = ModDirName + "::QServer"
+CLIENT_CALL_EVENT = ModDirName + "::QClient"
 
 class EasyListener:
     def __init__(self):
