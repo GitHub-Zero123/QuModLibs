@@ -13,6 +13,15 @@ class CallObjData:
 class EmptyContext:
     pass
 
+class CustomEngineEvent:
+    """ 自定义引擎事件数据结构 """
+    def __init__(self, namespace, systemName, eventName, priority=0):
+        # type: (str, str, str, int) -> None
+        self.namespace = namespace
+        self.systemName = systemName
+        self.eventName = eventName
+        self.priority = priority
+
 NAMESPACE = "Qu_" + ModDirName
 SYSTEMNAME = "{}_QLoader_system".format(ModDirName)
 SERVER_CALL_EVENT = "{}_QServer".format(ModDirName)
@@ -120,14 +129,14 @@ class EasyListener:
         except Exception:
             pass
     
-    def nativeStaticListen(self, eventName="", callFunc=lambda *_: None):
+    def nativeStaticListen(self, event="", callFunc=lambda *_: None):
         """ 原生静态监听注册 不支持运行时注销 """
         def _reg():
-            self._easyListenForEvent(eventName, self, self._allocMethodWithOUTFunction(callFunc))
+            self._easyListenForEvent(event, self, self._allocMethodWithOUTFunction(callFunc))
         self._callQueue.append(CallObjData(_reg))
 
-    def nativeListen(self, eventName="", parent=None, callFunc=lambda *_: None, updateNow=False):
-        # type: (str, object, object, bool) -> CallObjData | None
+    def nativeListen(self, event="", parent=None, callFunc=lambda *_: None, updateNow=False):
+        # type: (str | CustomEngineEvent, object, object, bool) -> CallObjData | None
         """ 原生动态监听 当updateNow声明为False时将会添加到系统队列安全的等待注册 """
         if not parent:
             parent = self._emptyContext
@@ -139,7 +148,7 @@ class EasyListener:
             return None
         def _reg():
             setattr(self, newFuncName, newFunc)
-            self._easyListenForEvent(eventName, self, newFunc)
+            self._easyListenForEvent(event, self, newFunc)
         waitCallObj = CallObjData(_reg)
         waitCallObj._uid = newFuncName
         self._callQueue.append(waitCallObj)
@@ -147,15 +156,15 @@ class EasyListener:
             self.unsafeUpdate(waitCallObj)
         return waitCallObj
 
-    def unNativeListen(self, eventName="", parent=None, callFunc=lambda *_: None):
-        # type: (str, object, object) -> None
+    def unNativeListen(self, event="", parent=None, callFunc=lambda *_: None):
+        # type: (str | CustomEngineEvent, object, object) -> None
         """ 取消特定方法的原生动态监听 """
         if not parent:
             parent = self._emptyContext
         newFuncName = "QListen{}_{}".format(id(parent), callFunc.__name__)
         if hasattr(self, newFuncName):
             # 已注册完毕的监听处理
-            self._easyUnListenForEvent(eventName, self, getattr(self, newFuncName))
+            self._easyUnListenForEvent(event, self, getattr(self, newFuncName))
             delattr(self, newFuncName)
             return
         # 在队列中等待注册的监听处理
@@ -165,10 +174,10 @@ class EasyListener:
         # type: (CallObjData) -> bool
         pass
 
-    def _easyListenForEvent(self, eventName="", parent=None, func=lambda: None):
+    def _easyListenForEvent(self, event="", parent=None, func=lambda: None):
         pass
 
-    def _easyUnListenForEvent(self, eventName="", parent=None, func=lambda: None):
+    def _easyUnListenForEvent(self, event="", parent=None, func=lambda: None):
         pass
 
     def removeCallObjByUid(self, _uid = ""):

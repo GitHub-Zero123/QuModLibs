@@ -203,7 +203,7 @@ class LoaderSystem(ClientSystem, EasyListener):
             sysObj = None
             try:
                 sysObj = clientImportModule(path)
-                if sysObj == None:
+                if sysObj is None:
                     errorPrint("[客户端] 系统文件加载失败(API异常): {}".format(path))
                     continue
             except Exception as e:

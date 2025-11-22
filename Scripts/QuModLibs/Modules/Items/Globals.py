@@ -52,7 +52,7 @@ class _ItemBasicInfo:
         self.update()
     
     def update(self):
-        if self.args == None:
+        if self.args is None:
             return
         self.itemName = self.args.get("itemName", "")
         self.maxStackSize = self.args.get("maxStackSize", 0)
@@ -414,7 +414,7 @@ class _ItemData:
     
     def getDict(self):
         """ 获取并拷贝一份dict参数 """
-        if self._dicArgs == None:
+        if self._dicArgs is None:
             return self.__class__.createItemData(_ItemData.NULL_ITEM, 0).getDict()
         return {k:v for k, v in self._dicArgs.items()}
     
@@ -472,7 +472,7 @@ class _ItemData:
     def itemUpdate(self):
         """ 更新计算物品属性 """
         dicArgs = self._dicArgs
-        if dicArgs == None:
+        if dicArgs is None:
             self.empty = True
         else:
             self.newItemName = dicArgs.get("newItemName", "")
@@ -498,7 +498,7 @@ class _ItemData:
             self._dicArgs = None
             self.empty = True
             return
-        if self._dicArgs == None:
+        if self._dicArgs is None:
             self._dicArgs = {}
         self._dicArgs["newItemName"] = itemName
         self._dicArgs["itemName"] = itemName

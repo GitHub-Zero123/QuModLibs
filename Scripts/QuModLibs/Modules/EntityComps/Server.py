@@ -45,7 +45,7 @@ class QEntityCompService(BaseService):
         if not entityId in self.entityCompMap:
             # ========== 初始化实体资源数据 ==========
             # comp = serverApi.GetEngineCompFactory().CreateModAttr(entityId)
-            # if comp.GetAttr(_USE_SAVE_KEY) == None:
+            # if comp.GetAttr(_USE_SAVE_KEY) is None:
             #     comp.SetAttr(_USE_SAVE_KEY, {})
             newObj = QEntityRuntime(entityId)
             self.entityCompMap[entityId] = newObj
@@ -235,7 +235,7 @@ class QBaseEntityComp(_QBaseEntityComp):
     @classmethod
     def hasComp(cls, entityId=""):
         """ 获取目标实体是否持有该组件 """
-        if cls.getComp(entityId) == None:
+        if cls.getComp(entityId) is None:
             return False
         return True
     

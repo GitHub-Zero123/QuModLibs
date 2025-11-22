@@ -60,7 +60,7 @@ class QTransform:
     def getUiNode(self):
         # type: () -> EasyScreenNodeCls | ScreenNodeWrapper | None
         """ 获取UINode节点 """
-        if self._uiNodeRef == None:
+        if self._uiNodeRef is None:
             return None
         return self._uiNodeRef()
 

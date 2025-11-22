@@ -228,7 +228,7 @@ class EasyScreenNodeCls(BaseScreenNode):
         """ 获取Ui 参数为UiName或继承EasyScreenNodeCls的子类 """
         if isinstance(Ui,str):
             return clientApi.GetUI(ModDirName, Ui)
-        elif Ui == None:
+        elif Ui is None:
             return cls.GetUi(cls)
         elif issubclass(Ui,EasyScreenNodeCls):
             return clientApi.GetUI(ModDirName, Ui.UiName)
@@ -395,7 +395,7 @@ class EasyScreenNodeCls(BaseScreenNode):
                             comp.CancelTimer(timer[0])
                             timer[0] = None
                         return func()
-                    if longPressDragTime == None:
+                    if longPressDragTime is None:
                         # 不启用长按触摸
                         return
 

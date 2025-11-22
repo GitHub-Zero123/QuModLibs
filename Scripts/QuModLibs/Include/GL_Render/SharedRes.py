@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 lambda: "By Zero123"
-lambda: "TIME: 2024/05/04"
+lambda: "TIME: 2025/11/22"
 from ...IN import ModDirName
 GL_MOB_QUERY_KEY = "Q_{}_GL.MOB_QUERY".format(ModDirName)
 
@@ -26,12 +26,12 @@ class GL_BASE_RES_OPT:
         self._SHARED_DATA = {}
     
     def CAN_NOT_NULL(self, value):
-        if value == None:
-            raise Exception("该资源对象禁止使用None值删除")
+        if value is None:
+            raise RuntimeError("该资源对象禁止使用None值删除")
     
     def _CREAT_TYPE(self, value):
         """ 基于value值计算操作类型 """
-        if value == None:
+        if value is None:
             self._TYPE = GL_OPT_INSTRUCT.DELETE
         else:
             self._TYPE = GL_OPT_INSTRUCT.WRITE
@@ -39,14 +39,14 @@ class GL_BASE_RES_OPT:
     def isTypeSame(self, other):
         # type: (GL_BASE_RES_OPT) -> bool
         """ 计算类型相同 """
-        if other == None:
+        if other is None:
             return False
         return isinstance(other, self.__class__)
 
     def processing(self, other):
         # type: (GL_BASE_RES_OPT) -> GL_OPT_INSTRUCT
         """ 资源操作处理 """
-        if self._TYPE == None:
+        if self._TYPE is None:
             return GL_OPT_INSTRUCT.OTHER
         if isinstance(other, self.__class__) and self._KEY == other._KEY:
             # 同类型操作且_KEY值相同

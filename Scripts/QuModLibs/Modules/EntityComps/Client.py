@@ -169,7 +169,7 @@ class QBaseEntityComp(_QBaseEntityComp):
     @classmethod
     def hasComp(cls, entityId=""):
         """ 获取目标实体是否持有该组件 """
-        if cls.getComp(entityId) == None:
+        if cls.getComp(entityId) is None:
             return False
         return True
 

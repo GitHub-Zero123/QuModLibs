@@ -228,7 +228,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 纹理资源操作 """
         comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value == None:
+        if value is None:
             return
         comp.AddPlayerTexture(key, value)
 
@@ -236,7 +236,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 模型资源操作 """
         comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value == None:
+        if value is None:
             comp.RemovePlayerGeometry(key)
             return
         comp.AddPlayerGeometry(key, value)
@@ -245,7 +245,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 材质资源操作 """
         comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value == None:
+        if value is None:
             return
         comp.AddPlayerRenderMaterial(key, value)
 
@@ -263,7 +263,7 @@ class PLAYER_RES_SERVICE(BaseService):
             # 是动画控制器资源
             comp.AddPlayerAnimationController(key, value)
             return
-        if value == None:
+        if value is None:
             comp.RemovePlayerAnimationController(key)
             return
         print("无效的动画资源: " + str(value))
@@ -272,7 +272,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 粒子资源操作 """
         comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value == None:
+        if value is None:
             return
         comp.AddPlayerParticleEffect(key, value)
 
@@ -280,7 +280,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 渲染控制器资源操作 """
         comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value == None:
+        if value is None:
             comp.RemovePlayerRenderController(key)
             return
         comp.AddPlayerRenderController(key, value)
@@ -289,7 +289,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ animate节点资源操作 """
         comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
         key, value, _autoReplace = self.getArgs(data)
-        if value == None:
+        if value is None:
             return
         if not _autoReplace:
             comp.AddPlayerScriptAnimate(key, value)
@@ -300,7 +300,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 音效资源操作 """
         comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value == None:
+        if value is None:
             return
         comp.AddPlayerSoundEffect(key, value)
 
@@ -308,7 +308,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 玩家皮肤资源操作 """
         value = self.getArgs(data)[0]
         comp = clientApi.GetEngineCompFactory().CreateModel(playerId)
-        if value == None:
+        if value is None:
             comp.ResetSkin()
             return
         comp.SetSkin(value)

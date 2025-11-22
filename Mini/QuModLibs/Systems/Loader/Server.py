@@ -5,10 +5,11 @@ from ...IN import RuntimeService
 from .SharedRes import (
     CallObjData,
     EasyListener,
+    CustomEngineEvent,
     SERVER_CALL_EVENT,
     CLIENT_CALL_EVENT,
     NAMESPACE,
-    SYSTEMNAME
+    SYSTEMNAME,
 )
 lambda: "By Zero123"
 ServerSystem = serverApi.GetServerSystemCls()
@@ -128,12 +129,18 @@ class LoaderSystem(ServerSystem, EasyListener):
     def _initSystemListen(self):
         self.ListenForEvent(NAMESPACE, SYSTEMNAME, CLIENT_CALL_EVENT, self, self._systemCallListener)
     
-    def _easyListenForEvent(self, eventName="", parent=None, func=lambda: None):
-        return self.ListenForEvent(engineSpaceName, engineSystemName, eventName, parent, func)
+    def _easyListenForEvent(self, event="", parent=None, func=lambda: None):
+        # type: (str | CustomEngineEvent, object, function) -> None
+        if isinstance(event, str):
+            return self.ListenForEvent(engineSpaceName, engineSystemName, event, parent, func)
+        return self.ListenForEvent(event.namespace, event.systemName, event.eventName, parent, func, event.priority)
 
-    def _easyUnListenForEvent(self, eventName="", parent=None, func=lambda: None):
-        return self.UnListenForEvent(engineSpaceName, engineSystemName, eventName, parent, func)
-    
+    def _easyUnListenForEvent(self, event="", parent=None, func=lambda: None):
+        # type: (str | CustomEngineEvent, object, function) -> None
+        if isinstance(event, str):
+            return self.UnListenForEvent(engineSpaceName, engineSystemName, event, parent, func)
+        return self.UnListenForEvent(event.namespace, event.systemName, event.eventName, parent, func, event.priority)
+
     def sendCall(self, playerId="", apiName="", args=tuple(), kwargs=dict()):
         """ 向指定玩家客户端请求调用 当playerId声明为*时代表全体玩家 """
         sendData = self._packageCallArgs(apiName, args, kwargs)
@@ -157,7 +164,7 @@ class LoaderSystem(ServerSystem, EasyListener):
         """ 移除销毁触发 """
         if funObj in self._onDestroyCall:
             self._onDestroyCall.remove(funObj)
-    
+
     def Destroy(self):
         # 用户级destroy执行
         for obj in self._onDestroyCall:
@@ -168,6 +175,7 @@ class LoaderSystem(ServerSystem, EasyListener):
             TRY_EXEC_FUN(obj)
         self._onDestroyCall_LAST = []
         RuntimeService._serverStarting = False
+        RuntimeService.delGlobalEnvRef()
 
     def getSystemList(self):
         # type: () -> list[tuple[str, str | None]]
@@ -227,7 +235,7 @@ class LoaderSystem(ServerSystem, EasyListener):
             sysObj = None
             try:
                 sysObj = serverImportModule(path)
-                if sysObj == None:
+                if sysObj is None:
                     errorPrint("[服务端] 系统文件加载失败(API异常): {}".format(path))
                     continue
             except Exception as e:
@@ -240,3 +248,4 @@ class LoaderSystem(ServerSystem, EasyListener):
         # 加载Finish事件
         for funcObj in RuntimeService._serverLoadFinish:
             TRY_EXEC_FUN(funcObj)
+        RuntimeService.addGlobalEnvRef()

@@ -164,7 +164,7 @@ class Entity(object):
     def Vec3Pos(self):
         # type: () -> Vec3 | None
         pos = self.Pos
-        if pos == None:
+        if pos is None:
             return None
         return Vec3.tupleToVec(pos)
 
@@ -172,7 +172,7 @@ class Entity(object):
     def Vec3FootPos(self):
         # type: () -> Vec3 | None
         pos = self.FootPos
-        if pos == None:
+        if pos is None:
             return None
         return Vec3.tupleToVec(pos)
 
@@ -185,7 +185,7 @@ class Entity(object):
     def Vec2Rot(self):
         # type: () -> Vec2 | None
         rot = self.Rot
-        if rot == None:
+        if rot is None:
             return None
         return Vec2.tupleToVec(rot)
 
@@ -203,7 +203,7 @@ class Entity(object):
     def Vec3DirFromRot(self):
         # type: () -> Vec3 | None
         rot = self.DirFromRot
-        if round == None:
+        if rot is None:
             return None
         return Vec3.tupleToVec(rot)
 
@@ -244,7 +244,7 @@ class Entity(object):
         """ 获取与另外一个实体对应的脚部中心点距离(若实体异常将返回errorValue) """
         myPos = clientApi.GetEngineCompFactory().CreatePos(self.entityId).GetPos()
         otherPos = clientApi.GetEngineCompFactory().CreatePos(otherEntity).GetPos()
-        if myPos == None or otherPos == None:
+        if myPos is None or otherPos is None:
             return errorValue
         return Vec3.tupleToVec(myPos).vectorSubtraction(Vec3.tupleToVec(otherPos)).getLength()
 

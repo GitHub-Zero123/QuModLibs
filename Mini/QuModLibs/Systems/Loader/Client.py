@@ -5,10 +5,11 @@ from ...IN import RuntimeService
 from .SharedRes import (
     CallObjData,
     EasyListener,
+    CustomEngineEvent,
     SERVER_CALL_EVENT,
     CLIENT_CALL_EVENT,
     NAMESPACE,
-    SYSTEMNAME
+    SYSTEMNAME,
 )
 lambda: "By Zero123"
 ClientSystem = clientApi.GetClientSystemCls()
@@ -104,11 +105,17 @@ class LoaderSystem(ClientSystem, EasyListener):
     def _initSystemListen(self):
         self.ListenForEvent(NAMESPACE, SYSTEMNAME, SERVER_CALL_EVENT, self, self._systemCallListener)
 
-    def _easyListenForEvent(self, eventName="", parent=None, func=lambda: None):
-        return self.ListenForEvent(engineSpaceName, engineSystemName, eventName, parent, func)
+    def _easyListenForEvent(self, event="", parent=None, func=lambda: None):
+        # type: (str | CustomEngineEvent, object, function) -> None
+        if isinstance(event, str):
+            return self.ListenForEvent(engineSpaceName, engineSystemName, event, parent, func)
+        return self.ListenForEvent(event.namespace, event.systemName, event.eventName, parent, func, event.priority)
 
-    def _easyUnListenForEvent(self, eventName="", parent=None, func=lambda: None):
-        return self.UnListenForEvent(engineSpaceName, engineSystemName, eventName, parent, func)
+    def _easyUnListenForEvent(self, event="", parent=None, func=lambda: None):
+        # type: (str | CustomEngineEvent, object, function) -> None
+        if isinstance(event, str):
+            return self.UnListenForEvent(engineSpaceName, engineSystemName, event, parent, func)
+        return self.UnListenForEvent(event.namespace, event.systemName, event.eventName, parent, func, event.priority)
 
     def sendCall(self, apiName="", args=tuple(), kwargs=dict()):
         """ 向服务器端请求调用 """
@@ -136,6 +143,7 @@ class LoaderSystem(ClientSystem, EasyListener):
             TRY_EXEC_FUN(obj)
         self._onDestroyCall_LAST = []
         RuntimeService._clientStarting = False
+        RuntimeService.delGlobalEnvRef()
 
     def getSystemList(self):
         # type: () -> list[tuple[str, str | None]]
@@ -195,7 +203,7 @@ class LoaderSystem(ClientSystem, EasyListener):
             sysObj = None
             try:
                 sysObj = clientImportModule(path)
-                if sysObj == None:
+                if sysObj is None:
                     errorPrint("[客户端] 系统文件加载失败(API异常): {}".format(path))
                     continue
             except Exception as e:
@@ -208,3 +216,4 @@ class LoaderSystem(ClientSystem, EasyListener):
         # 加载Finish事件
         for funcObj in RuntimeService._clientLoadFinish:
             TRY_EXEC_FUN(funcObj)
+        RuntimeService.addGlobalEnvRef()

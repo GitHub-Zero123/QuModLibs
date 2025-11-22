@@ -100,7 +100,7 @@ class QGridData:
     def updateOnceRender(self, viewPath, index=None):
         # type: (str, int | None) -> None
         """ 单一渲染更新 """
-        if index == None:
+        if index is None:
             index = self.getPosWithPath(viewPath) - 1
         self.bindUpdateBeforeFunc()
         self.incrementalCallback(viewPath, index)

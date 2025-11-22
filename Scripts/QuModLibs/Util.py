@@ -240,7 +240,7 @@ class ObjectConversion:
     def dumpsObject(data):
         # type: (object) -> dict
         """ 序列化对象 """
-        if data == None:
+        if data is None:
             return data
         elif type(data).__name__ in ObjectConversion.baseType:
             if isinstance(data, list):
@@ -260,7 +260,7 @@ class ObjectConversion:
     @staticmethod
     def getType(data):
         # type: (object) -> str | None
-        if data == None:
+        if data is None:
             return None
         if isinstance(data, dict) and ObjectConversion._typeKey in data and ObjectConversion._valueKey in data:
             return data[ObjectConversion._typeKey]
@@ -271,7 +271,7 @@ class ObjectConversion:
         # type: (object) -> object | dict
         """ 加载序列化对象 (当类匹配失败/构造失败将会抛出异常) """
         dataType = cls.getType(data)
-        if dataType == None:
+        if dataType is None:
             return None
         if dataType in cls.baseType:
             # 原生数据类型

@@ -246,7 +246,7 @@ class QRequests:
             """ 是否成功 """
             self.serviceTime = sTime
             """ 来自服务完成的时间 """
-            if sTime == None:
+            if sTime is None:
                 self.serviceTime = time()
         
         def dumps(self):
@@ -800,8 +800,10 @@ class _BaseService(IService, SERAnnotationLoader, TimerLoader):
     @classmethod
     def getUID(cls):
         """ 获取服务类识别标识符 """
-        clsPath = "{}::{}".format(cls.__module__, cls.__name__)
-        return clsPath
+        # clsPath = "{}::{}".format(cls.__module__, cls.__name__)
+        # return clsPath
+        # Faster Hash
+        return (cls.__module__, cls.__name__)
 
     def getID(self):
         """ 获取服务ID """
