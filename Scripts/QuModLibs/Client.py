@@ -281,7 +281,6 @@ class Entity(object):
         comp = compFactory.CreateQueryVariable(self.mEntityId)
         return comp.Set(query, value)
 
-
 # ================================================
 # 因历史原因 以下功能将在未来逐步废弃 不推荐继续使用
 # 替代模块: Modules.DataStore.*

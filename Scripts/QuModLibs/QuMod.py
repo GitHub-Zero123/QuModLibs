@@ -14,10 +14,6 @@ class _TempData:
     _threadAnalysis = False
 
 class Include:
-    attackExtend = False
-    """ AC战斗机制 链攻击系统
-        @依赖项: GLRender - 应用与全局节点同步管理
-    """
     glRender = False
     """ GLRender 玩家资源渲染系统 """
 
@@ -57,16 +53,12 @@ class QMain(object):
     def _loadServerInclude(self):
         """ 加载服务端Include扩展项 """
         quModLibsPath = IN.QuModLibsPath
-        if Include.attackExtend:
-            REG_SERVER_MODULE(quModLibsPath + ".Include.AttackExtend.Server")
         if Include.glRender:
             REG_SERVER_MODULE(quModLibsPath + ".Include.GL_Render.Server")
 
     def _loadClientInclude(self):
         """ 加载客户端Include扩展项 """
         quModLibsPath = IN.QuModLibsPath
-        if Include.attackExtend:
-            REG_CLIENT_MODULE(quModLibsPath + ".Include.AttackExtend.Client")
         if Include.glRender:
             REG_CLIENT_MODULE(quModLibsPath + ".Include.GL_Render.Client")
 

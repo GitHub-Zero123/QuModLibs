@@ -192,3 +192,15 @@ def SERVER_REG_NATIVE_PY_SYSTEM(namespace="", systemName="", absPath=""):
 def CLIENT_REG_NATIVE_PY_SYSTEM(namespace="", systemName="", absPath=""):
     """ 注册客户端原生Python System """
     _TempData._nativePyClient.append((namespace, systemName, absPath))
+
+def REG_ENV_INIT_HANDLER(func=lambda: None):
+    # type: (function) -> function
+    """ 注册环境初始化回调函数 """
+    IN.RuntimeService._envInitHandler.append(func)
+    return func
+
+def REG_ENV_DESTROY_HANDLER(func=lambda: None):
+    # type: (function) -> function
+    """ 注册环境销毁回调函数 """
+    IN.RuntimeService._envDestroyHandler.append(func)
+    return func

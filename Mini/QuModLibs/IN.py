@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .Util import SystemSide
+from .Util import SystemSide, TRY_EXEC_FUN
 lambda: "By Zero123"
 
 IsServerUser = False
@@ -20,6 +20,26 @@ class RuntimeService:
     _serverThreadID = None
     _clientThreadID = None
     _envPlayerId = None
+    # ENV REF
+    _globalEnvRefCount = 0
+    _envInitHandler = []       # type: list[function]
+    _envDestroyHandler = []    # type: list[function]
+
+    @staticmethod
+    def addGlobalEnvRef():
+        RuntimeService._globalEnvRefCount += 1
+        if RuntimeService._globalEnvRefCount == 1:
+            for func in RuntimeService._envInitHandler:
+                TRY_EXEC_FUN(func)
+
+    @staticmethod
+    def delGlobalEnvRef():
+        if RuntimeService._globalEnvRefCount > 0:
+            RuntimeService._globalEnvRefCount -= 1
+            if RuntimeService._globalEnvRefCount == 0:
+                for func in RuntimeService._envDestroyHandler:
+                    TRY_EXEC_FUN(func)
+            return
 
 def getUnderlineModDirName():
     # type: () -> str
