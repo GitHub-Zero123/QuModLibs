@@ -5,10 +5,11 @@ from ...IN import RuntimeService
 from .SharedRes import (
     CallObjData,
     EasyListener,
+    CustomEngineEvent,
     SERVER_CALL_EVENT,
     CLIENT_CALL_EVENT,
     NAMESPACE,
-    SYSTEMNAME
+    SYSTEMNAME,
 )
 lambda: "By Zero123"
 ClientSystem = clientApi.GetClientSystemCls()
@@ -104,11 +105,17 @@ class LoaderSystem(ClientSystem, EasyListener):
     def _initSystemListen(self):
         self.ListenForEvent(NAMESPACE, SYSTEMNAME, SERVER_CALL_EVENT, self, self._systemCallListener)
 
-    def _easyListenForEvent(self, eventName="", parent=None, func=lambda: None):
-        return self.ListenForEvent(engineSpaceName, engineSystemName, eventName, parent, func)
+    def _easyListenForEvent(self, event="", parent=None, func=lambda: None):
+        # type: (str | CustomEngineEvent, object, function) -> None
+        if isinstance(event, str):
+            return self.ListenForEvent(engineSpaceName, engineSystemName, event, parent, func)
+        return self.ListenForEvent(event.namespace, event.systemName, event.eventName, parent, func, event.priority)
 
-    def _easyUnListenForEvent(self, eventName="", parent=None, func=lambda: None):
-        return self.UnListenForEvent(engineSpaceName, engineSystemName, eventName, parent, func)
+    def _easyUnListenForEvent(self, event="", parent=None, func=lambda: None):
+        # type: (str | CustomEngineEvent, object, function) -> None
+        if isinstance(event, str):
+            return self.UnListenForEvent(engineSpaceName, engineSystemName, event, parent, func)
+        return self.UnListenForEvent(event.namespace, event.systemName, event.eventName, parent, func, event.priority)
 
     def sendCall(self, apiName="", args=tuple(), kwargs=dict()):
         """ 向服务器端请求调用 """
