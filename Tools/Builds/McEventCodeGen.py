@@ -59,9 +59,17 @@ def normalizeBacketList(s: str) -> str:
 
 def generateEventCode(doc: mes.EventDoc) -> str:
     """ 生成事件代码 """
+    sideType = doc.getSideType()
+    sideName = "未知"
+    if sideType == 0:
+        sideName = "客户端"
+    elif sideType == 1:
+        sideName = "服务端"
+    elif sideType == 2:
+        sideName = "双端"
     eventDoc = doc.getEventDesc()
     eventCode = f"""class {doc.getEventName()}(object):
-    \"\"\" {eventDoc.getDescText()} \"\"\"
+    \"\"\" [{sideName}] {eventDoc.getDescText()} \"\"\"
     def __init__(self, args=None):
         self.mArgs = args or dict()\n"""
     argsList = eventDoc.getArgsDesc()
