@@ -8,13 +8,23 @@ class _EVENT_JMP(object):
     def __init__(self, args=None):
         self.mArgs = args or dict()
 
-    def __getattr__(self, item):
-        return self.mArgs.get(item, None)
+    def __getattr__(self, name):
+        return self.mArgs.get(name, None)
 
     def __setattr__(self, key, value):
+        if key == "mArgs":
+            object.__setattr__(self, key, value)
+            return
         self.mArgs[key] = value
 
-Events = _EVENT_JMP()    # type: _EventsIMP
+class _ENGINE_ATTR_JMP(object):
+    def __getattr__(cls, item):
+        newType = type(item, (_EVENT_JMP,), {})
+        newType.__module__ = cls.__module__
+        newType.__name__ = item
+        return newType
+
+GameEvents = _ENGINE_ATTR_JMP()    # type: _EventsIMP
 
 def _parseEventClass(func):
     return getattr(func, "func_defaults")[0].__class__
