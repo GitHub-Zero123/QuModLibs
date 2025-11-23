@@ -90,6 +90,10 @@ class ChangeLevelUpCostServerEvent(object):
         """ 当前等级升级到下个等级需要的经验值，当设置升级经验小于1时会被强制调整到1 """
         return self.mArgs.get("levelUpCostExp")
 
+    @levelUpCostExp.setter
+    def levelUpCostExp(self, value):
+        self.mArgs["levelUpCostExp"] = value
+
     @property
     def changed(self):
         # type: () -> bool
@@ -563,6 +567,10 @@ class PlayerAttackEntityEvent(object):
         # type: () -> int
         """ 脚本是否设置伤害值：1表示是；0 表示否 """
         return self.mArgs.get("isValid")
+
+    @isValid.setter
+    def isValid(self, value):
+        self.mArgs["isValid"] = value
 
     @property
     def cancel(self):

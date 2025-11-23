@@ -431,11 +431,19 @@ class CustomCommandTriggerServerEvent(object):
         """ 设置自定义命令是否执行失败，默认为False，如果执行失败，返回信息以红色字体显示 """
         return self.mArgs.get("return_failed")
 
+    @return_failed.setter
+    def return_failed(self, value):
+        self.mArgs["return_failed"] = value
+
     @property
     def return_msg_key(self):
         # type: () -> str
         """ 设置返回给玩家或命令方块的信息，也支持通过语言文件(.lang)定义，默认值为commands.custom.success(自定义命令执行成功) """
         return self.mArgs.get("return_msg_key")
+
+    @return_msg_key.setter
+    def return_msg_key(self, value):
+        self.mArgs["return_msg_key"] = value
 
 class DelServerPlayerEvent(object):
     """ [服务端] 触发时机：删除玩家时触发该事件。 """

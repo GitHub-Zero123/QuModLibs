@@ -911,6 +911,10 @@ class FallingBlockBreakServerEvent(object):
         """ 是否取消方块物品掉落，可以在脚本层中设置 """
         return self.mArgs.get("cancelDrop")
 
+    @cancelDrop.setter
+    def cancelDrop(self, value):
+        self.mArgs["cancelDrop"] = value
+
 class FallingBlockCauseDamageBeforeClientEvent(object):
     """ [客户端] 触发时机：当下落的方块开始计算砸到实体的伤害时，客户端触发该事件 """
     def __init__(self, args=None):

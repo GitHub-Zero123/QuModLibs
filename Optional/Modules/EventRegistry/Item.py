@@ -1049,6 +1049,10 @@ class PlayerPickupArrowServerEvent(object):
         """ 取消拾取后重新设置该物品的拾取cd，小于15帧将视作15帧，大于等于97813帧将视作无法拾取，每秒30帧 """
         return self.mArgs.get("pickupDelay")
 
+    @pickupDelay.setter
+    def pickupDelay(self, value):
+        self.mArgs["pickupDelay"] = value
+
 class PlayerTryAddCustomContainerItemClientEvent(object):
     """ [客户端] 玩家尝试将物品添加到自定义容器时触发该事件 """
     def __init__(self, args=None):
@@ -1540,6 +1544,10 @@ class ServerPlayerTryTouchEvent(object):
         # type: () -> int
         """ 取消拾取后重新设置该物品的拾取cd，小于15帧将视作15帧，大于等于97813帧将视作无法拾取 """
         return self.mArgs.get("pickupDelay")
+
+    @pickupDelay.setter
+    def pickupDelay(self, value):
+        self.mArgs["pickupDelay"] = value
 
 class ShearsUseToBlockBeforeServerEvent(object):
     """ [服务端] 触发时机：实体手持剪刀对方块使用时，有剪刀特殊效果的方块会在服务端线程触发该事件 """

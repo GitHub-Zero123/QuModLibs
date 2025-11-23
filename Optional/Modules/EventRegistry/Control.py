@@ -12,6 +12,10 @@ class ClientJumpButtonPressDownEvent(object):
         """ 设置是否执行跳跃逻辑 """
         return self.mArgs.get("continueJump")
 
+    @continueJump.setter
+    def continueJump(self, value):
+        self.mArgs["continueJump"] = value
+
 class ClientJumpButtonReleaseEvent(object):
     """ [客户端] 跳跃按钮按下释放事件 """
     def __init__(self, args=None):

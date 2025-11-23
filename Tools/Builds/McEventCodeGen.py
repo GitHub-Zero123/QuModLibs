@@ -87,7 +87,7 @@ def generateEventCode(doc: mes.EventDoc) -> str:
 """)
         # Setter 生成
         if ("修改" in desc and not "不可修改" in desc) or (
-            "设置为" in desc
+            "设置" in desc
         ):
             codeBuf.append(f"""    @{formatName}.setter
     def {formatName}(self, value):
