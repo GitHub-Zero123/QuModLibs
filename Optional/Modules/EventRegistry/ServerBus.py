@@ -1,6 +1,20 @@
 # -*- coding: utf-8 -*-
 from functools import wraps
 from ...Systems.Loader.Server import LoaderSystem as _LoaderSystem
+if 1 > 2:
+    from . import Events as _EventsIMP
+
+class _EVENT_JMP(object):
+    def __init__(self, args=None):
+        self.mArgs = args or dict()
+
+    def __getattr__(self, item):
+        return self.mArgs.get(item, None)
+
+    def __setattr__(self, key, value):
+        self.mArgs[key] = value
+
+Events = _EVENT_JMP()    # type: _EventsIMP
 
 def _parseEventClass(func):
     return getattr(func, "func_defaults")[0].__class__
