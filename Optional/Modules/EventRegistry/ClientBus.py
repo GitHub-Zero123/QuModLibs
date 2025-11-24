@@ -4,6 +4,8 @@ from ...Systems.Loader.Client import LoaderSystem as _LoaderSystem
 if 1 > 2:
     from . import Events as _EventsIMP
 
+__all__ = ["SubscribeEvent", "GameEvents"]
+
 class _EVENT_JMP(object):
     def __init__(self, args=None):
         self.mArgs = args or dict()
