@@ -36,4 +36,4 @@ def SubscribeEvent(func):
     def _wrapperFunc(args=None):
         return func(eventCls(args))
     _LoaderSystem.REG_STATIC_LISTEN_FUNC(eventCls.__name__, _wrapperFunc)
-    return _wrapperFunc
+    return func
