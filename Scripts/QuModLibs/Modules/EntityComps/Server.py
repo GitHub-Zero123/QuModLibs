@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ...Server import serverApi, Entity, levelId
+from ...Server import serverApi, Entity
 from ...Util import TRY_EXEC_FUN, UniversalObject
 from ...IN import ModDirName
 from ..Services.Server import BaseService
@@ -31,7 +31,8 @@ class QEntityCompService(BaseService):
         # comp = serverApi.GetEngineCompFactory().CreateModAttr(entityId)
         # return comp.GetAttr(_USE_SAVE_KEY, None) != None
         # return _gameComp.IsEntityAlive(entityId)
-        return bool(_compFactory.CreatePos(entityId).GetPos())
+        # return bool(_compFactory.CreatePos(entityId).GetPos())
+        return _compFactory.CreateEngineType(entityId).GetEngineType() > 0
 
     def getEntityRuntime(self, entityId=""):
         """ 获取实体运行时管理对象 """

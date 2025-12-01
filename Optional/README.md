@@ -1,5 +1,5 @@
 # QuModLibs 可选扩展
-本目录包含QuModLibs的可选扩展模块，可以根据需要选择性地合并到项目中使用。 
+该目录包含QuModLibs的可选扩展模块，可以根据需要选择性地合并到项目中使用。 
 
 ## EventRegistry 模块
 EventRegistry模块提供了一套适用于Py2面向对象的事件注册解决方案。
