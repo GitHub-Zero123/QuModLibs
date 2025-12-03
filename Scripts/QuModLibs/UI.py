@@ -2,14 +2,8 @@
 from .QuClientApi.ui.screenNode import ScreenNode as BaseScreenNode
 from mod.client.ui.screenNode import ScreenNode
 import mod.client.extraClientApi as clientApi
-from .Util import (
-    ModDirName,
-    RandomUid,
-    ExceptionHandling,
-    getObjectPathName,
-    TRY_EXEC_FUN,
-    QDRAIIEnv
-)
+from .Util import ModDirName, RandomUid, ExceptionHandling, \
+    getObjectPathName, TRY_EXEC_FUN, QDRAIIEnv
 from .Client import ListenForEvent, UnListenForEvent
 from types import MethodType
 from functools import wraps

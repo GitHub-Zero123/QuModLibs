@@ -4,7 +4,7 @@ from .Util import Unknown, InitOperation, errorPrint, _eventsRedirect, \
     ObjectConversion as __ObjectConversion
 from .Systems.Loader.Server import LoaderSystem as _LoaderSystem, CustomEngineEvent
 if 1 > 2:
-    # 阻止补全库被真正import降低运行时开销
+    # 阻止补全库被真正import降低运行时开销（可通过自动化剔除工具移除）
     from .QuServerApi import extraServerApi
     from .QuServerApi.Events import Events as _EventsPrompt
 from .IN import ModDirName
