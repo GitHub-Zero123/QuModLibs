@@ -179,13 +179,26 @@ def ExceptionHandling(errorFun=lambda: None, output=False):
         return newFun
     return exceptionHandling
 
-def InitOperation(fun):
+def Singleton(func):
+    """ 单例缓存装饰器 """
+    ref = []
+    @wraps(func)
+    def _wrapper(*args, **kwargs):
+        if not ref:
+            ref.append(func(*args, **kwargs))
+            return ref[0]
+        return ref[0]
+    return _wrapper
+
+def InitOperation(func):
     """ 初始化运行 装饰器 @InitOperation 函数将会自动执行一次 不支持传参 """
     try:
-        fun()
+        func()
     except Exception as e:
         print("[Error] " + str(e))
-    return fun
+        import traceback
+        traceback.print_exc()
+    return func
 
 class Math:
     """ 简易数学运算类 """
