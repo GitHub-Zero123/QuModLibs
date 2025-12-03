@@ -5,6 +5,7 @@ import mod.client.extraClientApi as clientApi
 from . import IN as __IN
 from .IN import ModDirName
 
+compFactory = clientApi.GetEngineCompFactory()
 IsServerUser = __IN.IsServerUser
 """ 客户端常量_是否为房主 """
 TickEvent = "OnScriptTickClient"
@@ -98,67 +99,45 @@ def LocalCall(funcName="", *args, **kwargs):
     return _loaderSystem.localCall(funcName, *args, **kwargs)
 
 class Entity(object):
-    __slots__ = ("entityId","PropertySettingsDic",)
-    ErrorSet = "[Error]: 不支持的属性设置"
-
     class Type:
         PLAYER = "minecraft:player"
 
     class HealthComp(object):
         """ 生命值组件 """
-        def __init__(self,entityId):
+        def __init__(self, entityId):
             # type: (str) -> None
-            self.entityId = entityId
-            self.PropertySettingsDic = {}
+            self.mEntityId = entityId
+            self.mComp = compFactory.CreateAttr(entityId)
 
-        def __setattr__(self, Name, Value):
-            """ 属性设置处理 """
-            if Name in Entity.__slots__:
-                return object.__setattr__(self, Name, Value)
-            elif Name in self.PropertySettingsDic:
-                Fun = self.PropertySettingsDic[Name]
-                return Fun(Value)
-            else:
-                print(Entity.ErrorSet)
-                return None
-            
         @property
         def Value(self):
             # type: () -> int
-            comp = clientApi.GetEngineCompFactory().CreateAttr(self.entityId)
-            return comp.GetAttrValue(0)
+            return self.mComp.GetAttrValue(0)
+
         @property
         def Max(self):
             # type: () -> int
-            comp = clientApi.GetEngineCompFactory().CreateAttr(self.entityId)
-            return comp.GetAttrMaxValue(0)
+            return self.mComp.GetAttrMaxValue(0)
 
     def __init__(self, entityId):
         # type: (str) -> None
-        self.entityId = entityId
-        self.PropertySettingsDic = {}
-
-    def __setattr__(self, Name, Value):
-        """ 属性设置处理 """
-        if Name in Entity.__slots__:
-            return object.__setattr__(self, Name, Value)
-        elif Name in self.PropertySettingsDic:
-            Fun = self.PropertySettingsDic[Name]
-            return Fun(Value)
-        else:
-            print(Entity.ErrorSet)
-            return None
+        self.mEntityId = entityId
+    
+    @property
+    def entityId(self):
+        # type: () -> str
+        return self.mEntityId
 
     @property
     def Health(self):
         # type: () -> Entity.HealthComp
         """ 实体生命值属性 """
-        return self.__class__.HealthComp(self.entityId)
-    
+        return self.__class__.HealthComp(self.mEntityId)
+
     @property
     def Pos(self):
-        # type: () -> tuple[float,float,float] | None
-        return clientApi.GetEngineCompFactory().CreatePos(self.entityId).GetPos()
+        # type: () -> tuple[float, float, float] | None
+        return compFactory.CreatePos(self.mEntityId).GetPos()
 
     @property
     def Vec3Pos(self):
@@ -178,8 +157,8 @@ class Entity(object):
 
     @property
     def FootPos(self):
-        # type: () -> tuple[float,float,float] | None
-        return clientApi.GetEngineCompFactory().CreatePos(self.entityId).GetFootPos()
+        # type: () -> tuple[float, float, float] | None
+        return compFactory.CreatePos(self.mEntityId).GetFootPos()
 
     @property
     def Vec2Rot(self):
@@ -191,12 +170,12 @@ class Entity(object):
 
     @property
     def Rot(self):
-        # type: () -> tuple[float,float] | None
-        return clientApi.GetEngineCompFactory().CreateRot(self.entityId).GetRot()
-    
+        # type: () -> tuple[float, float] | None
+        return compFactory.CreateRot(self.mEntityId).GetRot()
+
     @property
     def DirFromRot(self):
-        # type: () -> tuple[float,float,float] | None
+        # type: () -> tuple[float, float, float] | None
         return clientApi.GetDirFromRot(self.Rot)
 
     @property
@@ -211,7 +190,7 @@ class Entity(object):
         # type: () -> bool
         """ 检查实体是否具有实质性(非物品/抛掷物) """
         entityTypeEnum = clientApi.GetMinecraftEnum().EntityType
-        comp = clientApi.GetEngineCompFactory().CreateEngineType(self.entityId)
+        comp = compFactory.CreateEngineType(self.mEntityId)
         entityType = comp.GetEngineType()
         if entityType & entityTypeEnum.Projectile == entityTypeEnum.Projectile or entityType & entityTypeEnum.ItemEntity == entityTypeEnum.ItemEntity:
             return False
@@ -242,20 +221,20 @@ class Entity(object):
     def EntityPointDistance(self, otherEntity="", errorValue=0.0):
         # type: (str, float) -> float
         """ 获取与另外一个实体对应的脚部中心点距离(若实体异常将返回errorValue) """
-        myPos = clientApi.GetEngineCompFactory().CreatePos(self.entityId).GetPos()
-        otherPos = clientApi.GetEngineCompFactory().CreatePos(otherEntity).GetPos()
+        myPos = compFactory.CreatePos(self.mEntityId).GetPos()
+        otherPos = compFactory.CreatePos(otherEntity).GetPos()
         if myPos is None or otherPos is None:
             return errorValue
         return Vec3.tupleToVec(myPos).vectorSubtraction(Vec3.tupleToVec(otherPos)).getLength()
 
     def SetRuntimeAttr(self, attrName, value):
         """ 设置运行时属性数据(根据MOD隔离) """
-        comp = clientApi.GetEngineCompFactory().CreateModAttr(self.entityId)
+        comp = compFactory.CreateModAttr(self.mEntityId)
         return comp.SetAttr("{}_{}".format(ModDirName, attrName), value)
 
     def GetRuntimeAttr(self, attrName, nullValue=None):
         """ 获取运行时属性数据(根据MOD隔离) """
-        comp = clientApi.GetEngineCompFactory().CreateModAttr(self.entityId)
+        comp = compFactory.CreateModAttr(self.mEntityId)
         return comp.GetAttr("{}_{}".format(ModDirName, attrName), nullValue)
 
     def getBox3D(self, useBodyRot=False):
@@ -264,7 +243,7 @@ class Entity(object):
         footPos = self.FootPos
         if not footPos:
             return QBox3D.createNullBox3D()
-        comp = clientApi.GetEngineCompFactory().CreateCollisionBox(self.entityId)
+        comp = compFactory.CreateCollisionBox(self.mEntityId)
         sx, sy = comp.GetSize()
         x, y, z = footPos
         return QBox3D(Vec3(sx, sy, sx), Vec3(x, y + sy * 0.5, z), None, rotationAngle = 0 if not useBodyRot else self.Rot[1])
@@ -272,24 +251,24 @@ class Entity(object):
     @property
     def Identifier(self):
         # type: () -> str
-        return clientApi.GetEngineCompFactory().CreateEngineType(self.entityId).GetEngineTypeStr()
+        return compFactory.CreateEngineType(self.mEntityId).GetEngineTypeStr()
     
-    def GetMoLang(self, Query):
+    def GetMoLang(self, query):
         # type: (str) -> float
         """ 获取 实体节点(仅支持原版Molang) """
-        comp = clientApi.GetEngineCompFactory().CreateQueryVariable(self.entityId)
-        return comp.GetMolangValue(Query)
+        comp = compFactory.CreateQueryVariable(self.mEntityId)
+        return comp.GetMolangValue(query)
     
-    def GetQuery(self, Query):
+    def GetQuery(self, query):
         # type: (str) -> float
         """ 获取实体Query节点 支持原版Molang和自定义Query """
-        if Query.lower().startswith("query.mod."):
-            return clientApi.GetEngineCompFactory().CreateQueryVariable(self.entityId).Get(Query)
+        if query.lower().startswith("query.mod."):
+            return compFactory.CreateQueryVariable(self.mEntityId).Get(query)
         else:
-            return self.GetMoLang(Query)
+            return self.GetMoLang(query)
     
-    def SetQuery(self, Query, Value):
+    def SetQuery(self, query, value):
         # type: (str,float) -> bool
         """ 设置实体Query节点 仅支持自定义Query """
-        comp = clientApi.GetEngineCompFactory().CreateQueryVariable(self.entityId)
-        return comp.Set(Query, Value)
+        comp = compFactory.CreateQueryVariable(self.mEntityId)
+        return comp.Set(query, value)

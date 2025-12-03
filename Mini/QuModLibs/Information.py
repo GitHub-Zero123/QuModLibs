@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-Version = "1.4.1"                                               # 版本信息
-ApiVersion = 4                                                  # API版本
-Author = "Zero123"                                              # 创作者
-ContactInformation = "QQ:913702423"                             # 联系方式
+Version = "1.4.2-MINI"                                               # 版本信息
+ApiVersion = 4                                                       # API版本
+Author = "Zero123"                                                   # 创作者
+ContactInformation = "QQ:913702423"                                  # 联系方式
 Other = """
     # QuModLibs By Zero123(网易:游趣开发组) 别名:一灵 | h2v-wither123... BilBil-UID:456549011
     # 开源协议: BSD(3)
