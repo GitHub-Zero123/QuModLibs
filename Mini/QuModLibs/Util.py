@@ -179,7 +179,6 @@ def InitOperation(func):
         traceback.print_exc()
     return func
 
-
 class Math:
     """ 简易数学运算类 """
     @staticmethod
