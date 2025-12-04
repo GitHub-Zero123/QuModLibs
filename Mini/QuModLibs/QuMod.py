@@ -83,6 +83,27 @@ class EasyMod:
         self._modDirName = modDirName if modDirName else IN.ModDirName
         """ Mod目录名 """
 
+    def getModDirName(self):
+        # type: () -> str
+        """ 获取Mod目录名 """
+        return self._modDirName
+
+    @staticmethod
+    def SubMod(currentModule):
+        # type: (str) ->  EasyMod
+        """ 子Mod构造器，需提供所在模块路径自动生成MOD对象
+        :param currentModule: 当前模块的路径（可以直接使用__name__变量）
+        """
+        return EasyMod.FromModule(currentModule)
+
+    @staticmethod
+    def FromModule(targetModule):
+        # type: (str) ->  EasyMod
+        point = targetModule.rfind(".")
+        if point <= 0:
+            raise ValueError("无法从模块路径中提取目录：" + targetModule)
+        return EasyMod(targetModule[:point])
+
     def regServer(self, relPath="", systemName=None):
         # type: (str, str | None) -> EasyMod
         """ 注册服务端(相对目录) """
