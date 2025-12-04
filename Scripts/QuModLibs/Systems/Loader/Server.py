@@ -15,9 +15,13 @@ lambda: "By Zero123"
 ServerSystem = serverApi.GetServerSystemCls()
 engineSpaceName, engineSystemName = serverApi.GetEngineNamespace(), serverApi.GetEngineSystemName()
 
-def serverImportModule(filePath):
-    """ 服务端文件导入 """
-    return serverApi.ImportModule(filePath)
+# def serverImportModule(filePath):
+#     """ 服务端文件导入 """
+#     return serverApi.ImportModule(filePath)
+
+def serverImportModule(moduleName):
+    """ 使用标准库__import__导入模块 临时修复山头接口异常问题 """
+    return getattr(serverImportModule, "__globals__")["__builtins__"]["__import__"](moduleName, fromlist="*")
 
 class BUILTINS:
     # ================== 客户端请求处理 ==================
