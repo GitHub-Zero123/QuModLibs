@@ -105,7 +105,7 @@ class EasyMod:
     def regServer(self, relPath="", systemName=None):
         # type: (str, str | None) -> EasyMod
         """ 注册服务端(相对目录) """
-        REG_SERVER_MODULE("{}.{}".format(self._modDirName, relPath), systemName)
+        REG_SERVER_MODULE(self._modDirName + "." + relPath, systemName)
         return self
 
     def Server(self, relPath="", systemName=None):
@@ -121,7 +121,7 @@ class EasyMod:
     def regClient(self, relPath="", systemName=None):
         # type: (str, str | None) -> EasyMod
         """ 注册客户端(相对目录) """
-        REG_CLIENT_MODULE("{}.{}".format(self._modDirName, relPath), systemName)
+        REG_CLIENT_MODULE(self._modDirName + "." + relPath, systemName)
         return self
 
     def addServerInitCallFunc(self, callFunc=lambda: None):
@@ -139,13 +139,13 @@ class EasyMod:
     def regNativePyClient(self, namespace="", systemName="", relPath=""):
         # type: (str, str, str) -> EasyMod
         """ 注册原生Python客户端(相对目录) """
-        CLIENT_REG_NATIVE_PY_SYSTEM(namespace, systemName, "{}.{}".format(self._modDirName, relPath))
+        CLIENT_REG_NATIVE_PY_SYSTEM(namespace, systemName, self._modDirName + "." + relPath)
         return self
 
     def regNativePyServer(self, namespace="", systemName="", relPath=""):
         # type: (str, str, str) -> EasyMod
         """ 注册原生Python服务端(相对目录) """
-        SERVER_REG_NATIVE_PY_SYSTEM(namespace, systemName, "{}.{}".format(self._modDirName, relPath))
+        SERVER_REG_NATIVE_PY_SYSTEM(namespace, systemName, self._modDirName + "." + relPath)
         return self
 
 def START_THREAD_ANALYSIS():
