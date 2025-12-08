@@ -200,7 +200,7 @@ class Entity(object):
         TypeEnum = clientApi.GetMinecraftEnum().EntityType
         comp = compFactory.CreateEngineType(self.mEntityId)
         entityType = comp.GetEngineType()
-        if entityType == -1:
+        if entityType <= 0:
             # 无效的实体类型
             return False
         if (entityType & TypeEnum.Projectile == TypeEnum.Projectile) or (entityType == TypeEnum.ItemEntity):
@@ -211,7 +211,7 @@ class Entity(object):
         # type: () -> bool
         """ 检查实体是否在内存中 """
         comp = compFactory.CreateEngineType(self.mEntityId)
-        return comp.GetEngineType() != -1
+        return comp.GetEngineType() > 0
 
     def convertToWorldVec3(self, absVec):
         # type: (Vec3) -> Vec3
