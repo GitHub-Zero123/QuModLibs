@@ -197,12 +197,21 @@ class Entity(object):
     def checkSubstantive(self):
         # type: () -> bool
         """ 检查实体是否具有实质性(非物品/抛掷物) """
-        entityTypeEnum = clientApi.GetMinecraftEnum().EntityType
+        TypeEnum = clientApi.GetMinecraftEnum().EntityType
         comp = compFactory.CreateEngineType(self.mEntityId)
         entityType = comp.GetEngineType()
-        if entityType & entityTypeEnum.Projectile == entityTypeEnum.Projectile or entityType & entityTypeEnum.ItemEntity == entityTypeEnum.ItemEntity:
+        if entityType == -1:
+            # 无效的实体类型
+            return False
+        if (entityType & TypeEnum.Projectile == TypeEnum.Projectile) or (entityType != TypeEnum.ItemEntity):
             return False
         return True
+
+    def isEntityValid(self):
+        # type: () -> bool
+        """ 检查实体是否在内存中 """
+        comp = compFactory.CreateEngineType(self.mEntityId)
+        return comp.GetEngineType() != -1
 
     def convertToWorldVec3(self, absVec):
         # type: (Vec3) -> Vec3
