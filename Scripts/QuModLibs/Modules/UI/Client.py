@@ -303,6 +303,9 @@ class QGridBinder(QRAIIControlFuntion):
             QGridData(...)
         )
 
+        RAII自动绑定 默认情况下若显性提供QGridData构造则会自动绑定到RAIIENV中
+        QGridBinder(self, QGridData(...))
+
         若class并未继承DRAII上下文管理，则需要手动start/stop
         def Create(self):
             self.gridBinder.start()
