@@ -101,6 +101,10 @@ class _QBaseEntityComp(TimerLoader):
     #     # type: (_QBaseEntityComp) -> None
     #     pass
 
+    def isBinding(self):
+        # type: () -> bool
+        return bool(self.entityId)
+
     def getNeedUpdate(self):
         # type: () -> bool
         return True
