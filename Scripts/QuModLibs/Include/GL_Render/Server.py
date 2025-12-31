@@ -184,7 +184,7 @@ class GL_PLAYER_RES:
     
     def _updateAnim(self):
         animList = list(self._animUpdateSet)
-        comp = serverApi.GetEngineCompFactory().CreateModAttr(self.playerId)
+        comp = compFactory.CreateModAttr(self.playerId)
         comp.SetAttr(GL_PLAYER_RES.GL_REST_ANIM_KEY, [animList, round(time(), 3)])
 
     def restAnim(self, animKey = "", refreshNow = False):
@@ -242,7 +242,7 @@ class GL_PLAYER_RES:
     def updateRender(self):
         """ 更新渲染数据 """
         self.needUpdate = False
-        comp = serverApi.GetEngineCompFactory().CreateModAttr(self.playerId)
+        comp = compFactory.CreateModAttr(self.playerId)
         resList = [v.build() for v in self._kvOpt.values()]     # 键值对资源
         resList.extend(opt.build() for opt in self._optPass)    # 通道资源
         comp.SetAttr(GL_PLAYER_RES.GL_RES_KEY, resList)
@@ -260,7 +260,7 @@ class GL_PLAYER_RES:
     def updateQuery(self):
         """ 更新节点数据 """
         self.needUpdateQuery = False
-        comp = serverApi.GetEngineCompFactory().CreateModAttr(self.playerId)
+        comp = compFactory.CreateModAttr(self.playerId)
         comp.SetAttr(GL_PLAYER_RES.GL_QUERY_KEY, self._queryMap)
     
     def updateAll(self):
@@ -394,7 +394,7 @@ class GL_Service(BaseService):
         _this = cls.access()
         if entityId in _this._entityResMap:
             return _this._entityResMap[entityId]
-        comp = serverApi.GetEngineCompFactory().CreateGame(levelId)
+        comp = compFactory.CreateGame(levelId)
         alive = comp.IsEntityAlive(entityId)
         if mustAlive and not alive:
             return None
@@ -405,14 +405,14 @@ class GL_Service(BaseService):
     @classmethod
     def setEntityQuery(cls, entityId="", queryName="query.mod.test", value=0, mustAlive=True):
         """ 设置实体节点(对于非玩家实体需要在客户端声明白名单,此外非玩家实体不会动态注册query需主动声明) """
-        comp = serverApi.GetEngineCompFactory().CreateGame(levelId)
+        comp = compFactory.CreateGame(levelId)
         alive = comp.IsEntityAlive(entityId)
         if mustAlive and not alive:
             return None
         if Entity(entityId).IsPlayer:
             cls.getPlayerRes(entityId, mustAlive).setQueryNow(queryName, value)
             return
-        comp = serverApi.GetEngineCompFactory().CreateModAttr(entityId)
+        comp = compFactory.CreateModAttr(entityId)
         lastValue = comp.GetAttr(GL_MOB_QUERY_KEY, {})
         if not isinstance(lastValue, dict):
             lastValue = dict()

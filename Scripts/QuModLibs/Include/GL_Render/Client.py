@@ -43,7 +43,7 @@ class PLAYER_RES_REBUILD_BEFORE(BaseEvent):
 def GL_SET_ENTITY_QUERYS_MAP(entityId, queryMap={}, isPlayer=False):
     # type: (str, dict[str, float | object], bool) -> None
     serviceBroadcast(MOB_QUERYS_UPDATE_EVENTS(entityId, queryMap, isPlayer))
-    comp = clientApi.GetEngineCompFactory().CreateQueryVariable(entityId)
+    comp = compFactory.CreateQueryVariable(entityId)
     # 理论上GLR支持任意数据类型的value 但只有数值类型会被设置到节点
     for k, v in queryMap.items():
         if isinstance(v, (float, int)):
@@ -54,7 +54,7 @@ class MOB_QUERY_COMP:
         self.entityId = entityId
 
     def onLoad(self):
-        comp = clientApi.GetEngineCompFactory().CreateModAttr(self.entityId)
+        comp = compFactory.CreateModAttr(self.entityId)
         queryData = self._toDict(comp.GetAttr(GL_MOB_QUERY_KEY, {}))
         self.updateQueryMap(queryData)
         comp.RegisterUpdateFunc(GL_MOB_QUERY_KEY, self.listenUpdateQuery)
@@ -73,7 +73,7 @@ class MOB_QUERY_COMP:
         GL_SET_ENTITY_QUERYS_MAP(self.entityId, queryMap)
 
     def onFree(self):
-        comp = clientApi.GetEngineCompFactory().CreateModAttr(self.entityId)
+        comp = compFactory.CreateModAttr(self.entityId)
         comp.UnRegisterUpdateFunc(GL_MOB_QUERY_KEY, self.listenUpdateQuery)
 
 @BaseService.Init
@@ -103,7 +103,7 @@ class PLAYER_RES_SERVICE(BaseService):
     def _REGISTER_QUERY():
         """ 注册自定义Query """
         for queryName in GL_CUSTOM_QUERY.GL_QUERYS:
-            comp = clientApi.GetEngineCompFactory().CreateQueryVariable(levelId)
+            comp = compFactory.CreateQueryVariable(levelId)
             comp.Register(queryName, 0.0)
 
     @staticmethod
@@ -205,7 +205,7 @@ class PLAYER_RES_SERVICE(BaseService):
         event = PLAYER_RES_REBUILD_BEFORE(entityId, lazyUpdate)
         serviceBroadcast(event)
         if not event.cancel:
-            comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+            comp = compFactory.CreateActorRender(entityId)
             comp.RebuildPlayerRender()
 
     def getEntityTempData(self, entityId):
@@ -226,7 +226,7 @@ class PLAYER_RES_SERVICE(BaseService):
     
     def OPT_TEXTURE(self, entityId, _type, data):
         """ 纹理资源操作 """
-        comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+        comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
         if value is None:
             return
@@ -234,7 +234,7 @@ class PLAYER_RES_SERVICE(BaseService):
 
     def OPT_GEOMETRY(self, entityId, _type, data):
         """ 模型资源操作 """
-        comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+        comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
         if value is None:
             comp.RemovePlayerGeometry(key)
@@ -243,7 +243,7 @@ class PLAYER_RES_SERVICE(BaseService):
 
     def OPT_MATERIAL(self, entityId, _type, data):
         """ 材质资源操作 """
-        comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+        comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
         if value is None:
             return
@@ -251,7 +251,7 @@ class PLAYER_RES_SERVICE(BaseService):
 
     def OPT_ANIM(self, entityId, _type, data):
         """ 动画/控制器资源操作 """
-        comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+        comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
         if str(value).startswith("animation."):
             # 是动画资源
@@ -270,7 +270,7 @@ class PLAYER_RES_SERVICE(BaseService):
 
     def OPT_PARTICLE_EFFECT(self, entityId, _type, data):
         """ 粒子资源操作 """
-        comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+        comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
         if value is None:
             return
@@ -278,7 +278,7 @@ class PLAYER_RES_SERVICE(BaseService):
 
     def OPT_RENDER_CONTROLLER(self, entityId, _type, data):
         """ 渲染控制器资源操作 """
-        comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+        comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
         if value is None:
             comp.RemovePlayerRenderController(key)
@@ -287,7 +287,7 @@ class PLAYER_RES_SERVICE(BaseService):
 
     def OPT_SCRIPT_ANIMATE(self, entityId, _type, data):
         """ animate节点资源操作 """
-        comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+        comp = compFactory.CreateActorRender(entityId)
         key, value, _autoReplace = self.getArgs(data)
         if value is None:
             return
@@ -298,7 +298,7 @@ class PLAYER_RES_SERVICE(BaseService):
 
     def OPT_SOUND_EFFECT(self, entityId, _type, data):
         """ 音效资源操作 """
-        comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+        comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
         if value is None:
             return
@@ -307,7 +307,7 @@ class PLAYER_RES_SERVICE(BaseService):
     def OPT_PLAYER_SKIN(self, entityId, _type, data):
         """ 玩家皮肤资源操作 """
         value = self.getArgs(data)[0]
-        comp = clientApi.GetEngineCompFactory().CreateModel(playerId)
+        comp = compFactory.CreateModel(playerId)
         if value is None:
             comp.ResetSkin()
             return
@@ -339,7 +339,7 @@ class PLAYER_RES_SERVICE(BaseService):
         if not queryKey in self._querySet:
             try:
                 self._querySet.add(queryKey)
-                comp = clientApi.GetEngineCompFactory().CreateQueryVariable(levelId)
+                comp = compFactory.CreateQueryVariable(levelId)
                 comp.Register(queryKey, 0.0)
             except:
                 pass
@@ -368,7 +368,7 @@ class PLAYER_RES_SERVICE(BaseService):
         newValue = args["newValue"]     # type: list
         keyList = newValue[0]           # type: list[str]
         playerData = self.getEntityTempData(entityId)
-        comp = clientApi.GetEngineCompFactory().CreateActorRender(entityId)
+        comp = compFactory.CreateActorRender(entityId)
         for key in keyList:
             if not key in playerData:
                 return
@@ -379,7 +379,7 @@ class PLAYER_RES_SERVICE(BaseService):
     def AddPlayerCreatedClientEvent(self, args={}):
         """ 玩家异步渲染事件 """
         playerId = args["playerId"]
-        comp = clientApi.GetEngineCompFactory().CreateModAttr(playerId)
+        comp = compFactory.CreateModAttr(playerId)
         rc = 0  # 统计资源操作次数 决策是否重建玩家渲染
         rc += self.staticResRender(playerId)
         rc += self.GL_RES_UPDATE({"entityId": playerId, "oldValue":[], "newValue": comp.GetAttr(self.__class__.GL_RES_KEY, [])}, True)
@@ -387,7 +387,6 @@ class PLAYER_RES_SERVICE(BaseService):
             PLAYER_RES_SERVICE.rebuildPlayerRes(playerId, True)
         self.GL_QUERY_UPDATE({"entityId": playerId, "oldValue":{}, "newValue": comp.GetAttr(self.__class__.GL_QUERY_KEY, {})})
         # ======== ====== 为区域渲染内的玩家建立数据变更监听 ======== ======
-        comp = clientApi.GetEngineCompFactory().CreateModAttr(playerId)
         comp.RegisterUpdateFunc(self.__class__.GL_RES_KEY, self.AUTO_RES_UPDATE)
         comp.RegisterUpdateFunc(self.__class__.GL_REST_ANIM_KEY, self.GL_REST_ANIM)
         comp.RegisterUpdateFunc(self.__class__.GL_QUERY_KEY, self.GL_QUERY_UPDATE)
@@ -397,7 +396,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 玩家离开渲染区域事件 """
         playerId = args["playerId"]
         # ======== ====== 对离开区域渲染的玩家取消数据变更监听 ======== ======
-        comp = clientApi.GetEngineCompFactory().CreateModAttr(playerId)
+        comp = compFactory.CreateModAttr(playerId)
         comp.UnRegisterUpdateFunc(self.__class__.GL_RES_KEY, self.AUTO_RES_UPDATE)
         comp.UnRegisterUpdateFunc(self.__class__.GL_REST_ANIM_KEY, self.GL_REST_ANIM)
         comp.UnRegisterUpdateFunc(self.__class__.GL_QUERY_KEY, self.GL_QUERY_UPDATE)

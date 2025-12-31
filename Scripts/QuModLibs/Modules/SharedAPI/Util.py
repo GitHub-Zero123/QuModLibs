@@ -3,8 +3,6 @@ lambda: "By Zero123"
 
 _DEFAULT = "default"
 
-# 为了解决逻辑对撞的可能性以及问题 引入了共享计数原则进行管理
-# 如战斗扩展和摄像机动画都有限制玩家移动的参数 但要确保必须在双方都结束才能恢复移动
 class SharedBox:
     """ 共享盒子 引用计数 """
     def __init__(self, load = lambda: None, unload = lambda: None):

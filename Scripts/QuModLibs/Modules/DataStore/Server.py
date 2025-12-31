@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from .Core import BaseAutoStoreCls
-import mod.server.extraServerApi as serverApi
+from ...Server import compFactory, levelId
+# import mod.server.extraServerApi as serverApi
 
 class ServerAutoStoreCls(BaseAutoStoreCls):
     __IS_CLIENT__ = False
@@ -12,19 +13,19 @@ class ServerAutoStoreCls(BaseAutoStoreCls):
 
     @classmethod
     def mLoadUserData(cls):
-        extraData = serverApi.GetEngineCompFactory().CreateExtraData(serverApi.GetLevelId())
+        extraData = compFactory.CreateExtraData(levelId)
         savedData = extraData.GetExtraData(cls.mGetSavedFullName())
         for k, v in cls.mUnpackClsDatas(savedData).items():
             type.__setattr__(cls, k, v)
 
     @classmethod
     def _mSaveUserData(cls):
-        extraData = serverApi.GetEngineCompFactory().CreateExtraData(serverApi.GetLevelId())
+        extraData = compFactory.CreateExtraData(levelId)
         extraData.SetExtraData(cls.mGetSavedFullName(), cls.mPackClsDatas())
 
     @classmethod
     def _updateOldDataCls(cls, oldDataKey):
-        extraData = serverApi.GetEngineCompFactory().CreateExtraData(serverApi.GetLevelId())
+        extraData = compFactory.CreateExtraData(levelId)
         data = extraData.GetExtraData(oldDataKey)
         if data:
             extraData.SetExtraData(oldDataKey, {}) # 清空旧数据

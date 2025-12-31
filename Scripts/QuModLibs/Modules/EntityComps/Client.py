@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ...Client import clientApi, Entity, levelId
+from ...Client import Entity, levelId, compFactory
 from ...Util import TRY_EXEC_FUN, UniversalObject
 from ...IN import ModDirName
 from ..Services.Client import BaseService
@@ -14,7 +14,7 @@ lambda: "By Zero123"
 _USE_SAVE_KEY = "{}_QComps".format(ModDirName)
 universalObject = UniversalObject()
 
-_gameComp = clientApi.GetEngineCompFactory().CreateGame(levelId)
+_gameComp = compFactory.CreateGame(levelId)
 
 class QEntityCompService(BaseService):
     def __init__(self):

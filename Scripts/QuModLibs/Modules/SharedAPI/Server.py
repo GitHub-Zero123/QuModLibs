@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ...Server import serverApi
+from ...Server import compFactory
 from ..EntityComps.Server import QBaseEntityComp
 from .Util import SharedBox, _DEFAULT
 
@@ -14,14 +14,14 @@ class ImmuneDamageComp(QBaseEntityComp):
     def onBind(self):
         QBaseEntityComp.onBind(self)
         self.sharedBox = SharedBox(
-            lambda: serverApi.GetEngineCompFactory().CreateHurt(self.entityId).ImmuneDamage(True),
+            lambda: compFactory.CreateHurt(self.entityId).ImmuneDamage(True),
             lambda: self.unbind()
         )
 
     def onUnBind(self):
         QBaseEntityComp.onUnBind(self)
         self.sharedBox.free()
-        serverApi.GetEngineCompFactory().CreateHurt(self.entityId).ImmuneDamage(False)
+        compFactory.CreateHurt(self.entityId).ImmuneDamage(False)
 
 class EntitySharedAPI:
     """ 实体共享API 基于引用计数管理 """

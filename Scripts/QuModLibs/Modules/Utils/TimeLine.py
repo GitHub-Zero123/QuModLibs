@@ -130,7 +130,7 @@ class QTimeLine:
         data = self.computeFrameAtTime(timeValue)
         if isinstance(data, QTimeLine.FArray):
             return data.getList()
-        raise RuntimeError("不受支持的类型")
+        raise TypeError("不受支持的类型")
 
     def getInstantVelocity(self, currentTime=0.0, deltaTime=0.033, unit=1.0):
         # type: (float, float, float) -> float | object
@@ -145,7 +145,7 @@ class QTimeLine:
         data = self.getInstantVelocity(currentTime, deltaTime, unit)
         if isinstance(data, QTimeLine.FArray):
             return data.getList()
-        raise RuntimeError("不受支持的类型")
+        raise TypeError("不受支持的类型")
 
     def getAverageVelocity(self, startTime=0.0, endTime=0.033, unit=1.0):
         # type: (float, float, float) -> float | object
@@ -163,7 +163,7 @@ class QTimeLine:
         data = self.getAverageVelocity(startTime, endTime, unit)
         if isinstance(data, QTimeLine.FArray):
             return data.getList()
-        raise RuntimeError("不受支持的类型")
+        raise TypeError("不受支持的类型")
 
     def updateTimeLine(self):
         """ 更新时间线 (当动态添加/移除时需要更新数据结构) """

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ...Client import ListenForEvent, UnListenForEvent, clientApi, playerId, levelId, Entity, Vec3
+from ...Client import ListenForEvent, UnListenForEvent, playerId, levelId, Entity, compFactory
 import math
 
 lambda: "QuModLibs 摄像机模块 By Zero123"
@@ -65,7 +65,7 @@ class LensPlayer:
     
     def loadAnim(self, obj):
         # type: (CameraData) -> None
-        comp = clientApi.GetEngineCompFactory().CreateCamera(levelId)
+        comp = compFactory.CreateCamera(levelId)
         comp.LockCamera((obj.x, obj.y, obj.z), (obj.rotX, obj.rotY, obj.rotZ))
         
     def onFpsUpdate(self):
@@ -78,7 +78,7 @@ class LensPlayer:
             self._animObj = None
             return
         self.loadAnim(self._animObj.getTransformationWithTime(self._animTime))
-        comp = clientApi.GetEngineCompFactory().CreateGame(levelId)
+        comp = compFactory.CreateGame(levelId)
         self._animTime += (1.0 / comp.GetFps()) * self._speed
     
     def play(self, animObj, speed = 1.0):
@@ -112,16 +112,16 @@ class LensPlayer:
     def onStart(self):
         self._workState = True
         self._createListen()
-        comp = clientApi.GetEngineCompFactory().CreateCamera(levelId)
+        comp = compFactory.CreateCamera(levelId)
         comp.LockModCameraYaw(1)    # 锁定摄像机 不允许玩家主动控制
         comp.LockModCameraPitch(1)
 
-        comp = clientApi.GetEngineCompFactory().CreatePlayerView(playerId)
+        comp = compFactory.CreatePlayerView(playerId)
         comp.LockPerspective(1)     # 进入第三人称状态
 
         if self.lockOperation:
             # 锁定操作
-            # motionComp = clientApi.GetEngineCompFactory().CreateActorMotion(playerId)
+            # motionComp = compFactory.CreateActorMotion(playerId)
             # motionComp.LockInputVector((0, 0))
             from ...Modules.SharedAPI.Client import PlayerSharedAPI
             # 采用引用计数管理玩家是否允许移动
@@ -130,17 +130,17 @@ class LensPlayer:
     def onEnd(self):
         self._workState = False
         self._freeListen()
-        comp = clientApi.GetEngineCompFactory().CreateCamera(levelId)
+        comp = compFactory.CreateCamera(levelId)
         comp.LockModCameraYaw(0)
         comp.LockModCameraPitch(0)
         comp.UnLockCamera()         # 解锁摄像机
 
-        comp = clientApi.GetEngineCompFactory().CreatePlayerView(playerId)
+        comp = compFactory.CreatePlayerView(playerId)
         comp.LockPerspective(-1)
 
         if self.lockOperation:
             # 恢复操作
-            # motionComp = clientApi.GetEngineCompFactory().CreateActorMotion(playerId)
+            # motionComp = compFactory.CreateActorMotion(playerId)
             # motionComp.UnlockInputVector()
             from ...Modules.SharedAPI.Client import PlayerSharedAPI
             # 采用引用计数管理玩家是否允许移动

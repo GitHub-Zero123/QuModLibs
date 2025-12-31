@@ -6,12 +6,9 @@ from ...Util import TRY_EXEC_FUN, QTemplate
 from copy import copy, deepcopy
 lambda: "联机大厅模块 By Zero123"
 
-# 该项目处于实验阶段 请警惕使用
-# 推荐使用 QuickLobbyManager 作为联机大厅的管理器
-
 def LOG_TO_ALL_PLAYER(text=""):
     for playerId in serverApi.GetPlayerList():
-        comp = serverApi.GetEngineCompFactory().CreateGame(playerId)
+        comp = compFactory.CreateGame(playerId)
         comp.SetNotifyMsg(str(text), serverApi.GenerateColor("BLUE"))
 
 def AUTO_DEBUG_MODE():
@@ -290,7 +287,7 @@ class BaseLobbyManager(BaseService, QTemplate):
         # 调试模式 存档数据读取
         datasKey = "{}_LOCAL_DEBUG_DATAS".format(ModDirName)
         ordersKey = "{}_LOCAL_DEBUG_ORDERS".format(ModDirName)
-        comp = serverApi.GetEngineCompFactory().CreateExtraData(levelId)
+        comp = compFactory.CreateExtraData(levelId)
         saveDatas = comp.GetExtraData(datasKey)
         if saveDatas:
             BaseLobbyManager._LOCAL_DEBUG_DATAS = saveDatas
@@ -305,7 +302,7 @@ class BaseLobbyManager(BaseService, QTemplate):
         # 调试模式 存档数据保存
         datasKey = "{}_LOCAL_DEBUG_DATAS".format(ModDirName)
         ordersKey = "{}_LOCAL_DEBUG_ORDERS".format(ModDirName)
-        comp = serverApi.GetEngineCompFactory().CreateExtraData(levelId)
+        comp = compFactory.CreateExtraData(levelId)
         comp.SetExtraData(datasKey, BaseLobbyManager._LOCAL_DEBUG_DATAS, False)
         comp.SetExtraData(ordersKey, BaseLobbyManager._LOCAL_DEBUG_ORDERS, True)
 
@@ -321,7 +318,7 @@ class BaseLobbyManager(BaseService, QTemplate):
             if BaseLobbyManager.LOCAL_DEBUG_FORCE_SIMULATION_UID:
                 return BaseLobbyManager.LOCAL_DEBUG_FORCE_SIMULATION_UID
             return int(playerId)
-        comp = serverApi.GetEngineCompFactory().CreateHttp(levelId)
+        comp = compFactory.CreateHttp(levelId)
         return comp.GetPlayerUid(playerId)
 
     @staticmethod
@@ -341,14 +338,14 @@ class BaseLobbyManager(BaseService, QTemplate):
                 "data": deepcopy([{"key": k, "value": dataMap[k]} for k in keys if k in dataMap])
             }})
             return
-        comp = serverApi.GetEngineCompFactory().CreateHttp(levelId)
+        comp = compFactory.CreateHttp(levelId)
         comp.LobbyGetStorage(callback, uid, keys)
 
     @staticmethod
     def LOBBY_GET_STORAGE_BY_SORT(key, length, callback, ascend=False, offset=0):
         # type: (str, int, function, bool, int) -> None
         """ 排序获取存储的数据 仅联机大厅可用(length单次请求至多50个数量) """
-        comp = serverApi.GetEngineCompFactory().CreateHttp(levelId)
+        comp = compFactory.CreateHttp(levelId)
         comp.LobbyGetStorageBySort(callback, key, ascend, offset, length)
 
     @staticmethod
@@ -378,7 +375,7 @@ class BaseLobbyManager(BaseService, QTemplate):
                 }
             })
             return
-        comp = serverApi.GetEngineCompFactory().CreateHttp(levelId)
+        comp = compFactory.CreateHttp(levelId)
         comp.LobbySetStorageAndUserItem(callback, uid, orderId, entitiesGetter)
 
     @staticmethod
@@ -393,7 +390,7 @@ class BaseLobbyManager(BaseService, QTemplate):
             }
             TRY_EXEC_FUN(callback, data)
             return
-        comp = serverApi.GetEngineCompFactory().CreateHttp(levelId)
+        comp = compFactory.CreateHttp(levelId)
         comp.QueryLobbyUserItem(callback, uid)
 
     @staticmethod

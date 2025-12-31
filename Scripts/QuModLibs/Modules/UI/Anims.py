@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .Client import QUIControlFuntion, QUIAutoControlFuntion, EasyScreenNodeCls, ScreenNodeWrapper
-from ...Client import clientApi, ListenForEvent, UnListenForEvent, levelId
+from ...Client import compFactory, ListenForEvent, UnListenForEvent, levelId
 from ..Utils.TimeLine import QTimeLine
 from ...Util import QDRAIIEnv, QRAIIDelayed
 from copy import copy
@@ -417,7 +417,7 @@ class QAnimManager(QUIAutoControlFuntion, QRAIIDelayed):
     def fpsUpdate(self, mut=1.0):
         if self._conAnimDict:
             # 避免空update
-            comp = clientApi.GetEngineCompFactory().CreateGame(levelId)
+            comp = compFactory.CreateGame(levelId)
             self.update(1.0 / comp.GetFps() * mut)
 
     @classmethod

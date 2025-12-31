@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-import mod.server.extraServerApi as serverApi
+# import mod.server.extraServerApi as serverApi
+from ...Server import compFactory, levelId
 from ..EventsPool.Server import POOL_ListenForEvent, POOL_UnListenForEvent
 from .Core import *
 lambda: "By Tohru"
@@ -11,11 +12,11 @@ __all__ = [
     "asyncRunner",
 ]
 
-levelId = serverApi.GetLevelId()
+# levelId = serverApi.GetLevelId()
 
 def sleepAsync(duration):
     def executor(resolve, reject):
-        comp = serverApi.GetEngineCompFactory().CreateGame(levelId)
+        comp = compFactory.CreateGame(levelId)
         comp.AddTimer(duration, resolve)
     return Promise(executor)
 
@@ -50,7 +51,7 @@ def waitEvent(name, callBack, time=5.0):
             reject()
 
         funcRef.value = requestEvent(name, eventCallBack)
-        comp = serverApi.GetEngineCompFactory().CreateGame(levelId)
+        comp = compFactory.CreateGame(levelId)
         comp.AddTimer(time, rejectHandler)
 
     return Promise(executor)

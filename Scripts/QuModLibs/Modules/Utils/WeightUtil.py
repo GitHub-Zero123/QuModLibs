@@ -8,7 +8,7 @@ class QWeightObject:
         self.weight = int(weight)
         self.value = value
         if self.weight <= 0:
-            raise Exception("权重值不是有效的")
+            raise ValueError("权重值不是有效的")
 
 class IQWeightContainer:
     def addQWeightObject(self, _QWeightObject):
@@ -159,4 +159,4 @@ class QWeightPool(IQWeightContainer):
             if wV <= 0:
                 # 抽取结果位于此处
                 return choice(lis).value
-        raise Exception("随机摇取错误 剩余权重值 {}".format(wV))
+        raise ValueError("随机摇取错误 剩余权重值 {}".format(wV))

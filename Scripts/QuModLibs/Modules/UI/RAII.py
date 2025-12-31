@@ -72,7 +72,7 @@ class TouchPaperDoll(QEControlFuntion):
         self.updateRender()
     
     def getMPos(self):
-        comp = clientApi.GetEngineCompFactory().CreateActorMotion(playerId)
+        comp = compFactory.CreateActorMotion(playerId)
         return comp.GetMousePosition()
 
     def touchHandler(self, args={}):

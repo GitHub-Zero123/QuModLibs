@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ...Client import clientApi, levelId, playerId
+from ...Client import levelId, playerId, compFactory
 from .Globals import (
     _ItemBasicInfo,
     _ItemData,
@@ -13,7 +13,7 @@ class ItemBasicInfo(_ItemBasicInfo):
     """ 基础物品信息 """
     def getArgs(self, itemName, auxValue, isEnchanted):
         # type: (str, int, bool) -> dict
-        comp = clientApi.GetEngineCompFactory().CreateItem(levelId)
+        comp = compFactory.CreateItem(levelId)
         return comp.GetItemBasicInfo(itemName, auxValue, isEnchanted)
 
 class ItemData(_ItemData):
@@ -29,6 +29,6 @@ class InventoryData(_InventoryData):
 
 def GET_PLAYER_INVENTORY():
     """ 获取玩家当前背包数据 """
-    comp = clientApi.GetEngineCompFactory().CreateItem(playerId)
+    comp = compFactory.CreateItem(playerId)
     dataList = comp.GetPlayerAllItems(0, True) or []
     return InventoryData.loadItemDictList(dataList)

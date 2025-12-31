@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from .Core import BaseAutoStoreCls
-import mod.client.extraClientApi as clientApi
+from ...Client import compFactory, levelId
+# import mod.client.extraClientApi as clientApi
 
 class ClientAutoStoreCls(BaseAutoStoreCls):
     __IS_CLIENT__ = True
@@ -13,19 +14,19 @@ class ClientAutoStoreCls(BaseAutoStoreCls):
 
     @classmethod
     def mLoadUserData(cls):
-        configClient = clientApi.GetEngineCompFactory().CreateConfigClient(clientApi.GetLevelId())
+        configClient = compFactory.CreateConfigClient(levelId)
         savedData = configClient.GetConfigData(cls.mGetSavedFullName(), cls.__GLOBAL_MODE__)
         for k, v in cls.mUnpackClsDatas(savedData).items():
             type.__setattr__(cls, k, v)
 
     @classmethod
     def _mSaveUserData(cls):
-        configClient = clientApi.GetEngineCompFactory().CreateConfigClient(clientApi.GetLevelId())
+        configClient = compFactory.CreateConfigClient(levelId)
         configClient.SetConfigData(cls.mGetSavedFullName(), cls.mPackClsDatas(), cls.__GLOBAL_MODE__)
 
     @classmethod
     def _updateOldDataCls(cls, oldDataKey):
-        configClient = clientApi.GetEngineCompFactory().CreateConfigClient(clientApi.GetLevelId())
+        configClient = compFactory.CreateConfigClient(levelId)
         data = configClient.GetConfigData(oldDataKey, cls.__GLOBAL_MODE__)
         if data:
             configClient.SetConfigData(oldDataKey, {}, cls.__GLOBAL_MODE__) # 清空旧数据

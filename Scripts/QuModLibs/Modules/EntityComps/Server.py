@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ...Server import serverApi, Entity
+from ...Server import serverApi, Entity, compFactory
 from ...Util import TRY_EXEC_FUN, UniversalObject
 from ...IN import ModDirName
 from ..Services.Server import BaseService
@@ -17,7 +17,6 @@ _USE_SAVE_KEY = "{}_QComps".format(ModDirName)
 universalObject = UniversalObject()
 
 # _gameComp = serverApi.GetEngineCompFactory().CreateGame(levelId)
-_compFactory = serverApi.GetEngineCompFactory()
 
 class QEntityCompService(BaseService):
     def __init__(self):
@@ -32,7 +31,7 @@ class QEntityCompService(BaseService):
         # return comp.GetAttr(_USE_SAVE_KEY, None) != None
         # return _gameComp.IsEntityAlive(entityId)
         # return bool(_compFactory.CreatePos(entityId).GetPos())
-        return _compFactory.CreateEngineType(entityId).GetEngineType() > 0
+        return compFactory.CreateEngineType(entityId).GetEngineType() > 0
 
     def getEntityRuntime(self, entityId=""):
         """ 获取实体运行时管理对象 """
@@ -264,7 +263,7 @@ class QBaseEntityComp(_QBaseEntityComp):
         if self.entityId:
             return False
         # alive = _gameComp.IsEntityAlive(entityId)
-        hasEntity = bool(_compFactory.CreatePos(entityId).GetPos())
+        hasEntity = bool(compFactory.CreatePos(entityId).GetPos())
         if not hasEntity or not self._preVerification(entityId):
             return False
         self.entityId = entityId

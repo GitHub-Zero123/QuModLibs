@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ...Client import clientApi, levelId
+from ...Client import compFactory, levelId
 from .Client import QUIControlFuntion, QUIAutoControlFuntion, QGridData, EasyScreenNodeCls, ScreenNodeWrapper
 from math import ceil
 lambda: "UI扩展功能 By Zero123"
@@ -223,7 +223,7 @@ class QVirtualGridManager(QUIControlFuntion):
     
     def renderBefore(self):
         if self._lastTimer:
-            comp = clientApi.GetEngineCompFactory().CreateGame(levelId)
+            comp = compFactory.CreateGame(levelId)
             comp.CancelTimer(self._lastTimer)
             self._lastTimer = None
         uiNode = self.getUiNode()
@@ -245,7 +245,7 @@ class QVirtualGridManager(QUIControlFuntion):
     
     def _renderFinish(self):
         if len(self._hidePathList) > 0:
-            comp = clientApi.GetEngineCompFactory().CreateGame(levelId)
+            comp = compFactory.CreateGame(levelId)
             self._lastTimer = comp.AddTimer(0.0, self.renderFinish)
 
     def onCreate(self):
@@ -264,6 +264,6 @@ class QVirtualGridManager(QUIControlFuntion):
         QUIControlFuntion.onDestroy(self)
         self.gridAdapter.removeControl()
         if self._lastTimer:
-            comp = clientApi.GetEngineCompFactory().CreateGame(levelId)
+            comp = compFactory.CreateGame(levelId)
             comp.CancelTimer(self._lastTimer)
             self._lastTimer = None
