@@ -203,7 +203,7 @@ class Entity(object):
         if entityType <= 0:
             # 无效的实体类型
             return False
-        if (entityType & TypeEnum.Projectile == TypeEnum.Projectile) or (entityType == TypeEnum.ItemEntity):
+        if (entityType & TypeEnum.Projectile == TypeEnum.Projectile) or (entityType == TypeEnum.ItemEntity) or (entityType == TypeEnum.Experience):
             return False
         return True
 
