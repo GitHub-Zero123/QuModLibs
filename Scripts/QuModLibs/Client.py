@@ -44,13 +44,13 @@ def _tryCastInt(v):
 
 @Singleton
 def GetEngineVersion():
-    # type: () -> tuple[int]
+    # type: () -> tuple[int, ...]
     """ 获取当前引擎版本号 """
     return tuple(_tryCastInt(v) for v in clientApi.GetEngineVersion().split("."))
 
 @Singleton
 def GetMinecraftVersion():
-    # type: () -> tuple[int]
+    # type: () -> tuple[int, ...]
     """ 获取当前MC版本号 """
     return tuple(_tryCastInt(v) for v in clientApi.GetMinecraftVersion().split("."))
 

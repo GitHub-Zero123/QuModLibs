@@ -46,7 +46,7 @@ def _tryCastInt(v):
 
 @Singleton
 def GetMinecraftVersion():
-    # type: () -> tuple[int]
+    # type: () -> tuple[int, ...]
     """ 获取当前MC版本号 """
     return tuple(_tryCastInt(v) for v in serverApi.GetMinecraftVersion().split("."))
 
