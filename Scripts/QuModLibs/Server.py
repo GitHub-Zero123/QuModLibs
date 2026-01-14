@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .Math import Vec3, Vec2, QBox3D
-from .Util import Unknown, InitOperation, errorPrint, _eventsRedirect, \
+from .Util import Unknown, InitOperation, errorPrint, _eventsRedirect, Singleton, \
     ObjectConversion as __ObjectConversion
 from .Systems.Loader.Server import LoaderSystem as _LoaderSystem, CustomEngineEvent
 if 1 > 2:
@@ -37,6 +37,18 @@ def getLoaderSystem():
     return _LoaderSystem.getSystem()
 
 _loaderSystem = getLoaderSystem()
+
+def _tryCastInt(v):
+    try:
+        return int(v)
+    except ValueError:
+        return 0
+
+@Singleton
+def GetMinecraftVersion():
+    # type: () -> tuple[int]
+    """ 获取当前MC版本号 """
+    return tuple(_tryCastInt(v) for v in serverApi.GetMinecraftVersion().split("."))
 
 def _FORMAT_EVENET_INFO(event):
     if isinstance(event, CustomEngineEvent):
