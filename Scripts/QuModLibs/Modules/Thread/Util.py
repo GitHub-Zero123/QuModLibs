@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
-from threading import Thread
-from Queue import Queue
+import threading
+import Queue
 
 class QThreadPool:
     def __init__(self, maxThreadCount=2, daemon=None):
         # type: (int, bool | None) -> None
-        from threading import Event
         self.maxThreadCount = maxThreadCount
-        self._closeEvent = Event()
         self.daemon = daemon
-        self._taskQueue = Queue(maxsize=0)
-        self._threadList = []   # type: list[Thread]
-    
+        self._taskQueue = Queue.Queue(maxsize=0)
+        self._threadList = []   # type: list[threading.Thread]
+        self._closed = False
+
     def start(self):
         """ 启用线程并返回自己的实例 """
         if len(self._threadList) <= 0:
@@ -20,29 +19,43 @@ class QThreadPool:
 
     def _createThread(self, count=1):
         for _ in range(count):
-            thread = Thread(target=self._threadLoop)
+            thread = threading.Thread(target=self._threadLoop)
             if self.daemon:
                 thread.daemon = True
             self._threadList.append(thread)
             thread.start()
 
     def _threadLoop(self):
-        while not self._closeEvent.is_set():
-            item = None
-            try:
-                item = self._taskQueue.get(timeout=0.05)
-            except:
-                continue
+        while 1:
+            item = self._taskQueue.get()
+            if item is None:
+                break
+            elif self._closed:
+                break
             try:
                 item()
             except Exception:
                 import traceback
                 traceback.print_exc()
-    
+
     def addTask(self, func=lambda: None):
         """ 添加执行任务 """
+        if func is None:
+            raise ValueError("func 不能为 None")
         self._taskQueue.put(func)
 
-    def free(self):
-        """ 释放线程池 """
-        self._closeEvent.set()
+    def free(self, autoJoin=False):
+        """ 释放线程池，请勿重复使用已经释放的线程池 """
+        if self._closed:
+            return
+        threadCount = len(self._threadList)
+        self._closed = True
+        for _ in range(threadCount):
+            self._taskQueue.put(None)
+        if autoJoin:
+            self.join()
+
+    def join(self):
+        """ 等待所有线程结束 """
+        for thread in self._threadList:
+            thread.join()
