@@ -34,6 +34,9 @@ class QOrderedSet(object):
     def _getMapRef(self):
         return self._data
 
+    def toList(self):
+        return list(self._data)
+
     def hasValue(self, item):
         return item in self._data
 
