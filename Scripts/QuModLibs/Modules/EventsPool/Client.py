@@ -3,7 +3,6 @@ from ...Client import ListenForEvent
 from ...Util import TRY_EXEC_FUN, getObjectPathName
 from ..Utils.Container import QOrderedSet
 from ..Services.Client import BaseService
-from copy import copy
 lambda: "By Zero123"
 
 # 网易事件监听机制受优先级以及排序影响 在高频率动态监听/取消的环境下对性能造成的压力较高
@@ -11,13 +10,15 @@ lambda: "By Zero123"
 
 class EventsPoolService(BaseService):
     _EVENTS_MAP = {}    # type: dict[str, QOrderedSet]
-    _STATIC_LISTEN_SET = QOrderedSet()
+    _STATIC_LISTEN_SET = set()
     def _createListenFunc(self, eventName=""):
-        nullSet = QOrderedSet()
         def _listenFunc(*args):
-            for func in copy(EventsPoolService._EVENTS_MAP.get(eventName, nullSet)):
+            handlers = EventsPoolService._EVENTS_MAP.get(eventName)
+            if not handlers:
+                return
+            for func in handlers.toList():
                 TRY_EXEC_FUN(func, *args)
-        _listenFunc.__name__ = "QPOOL_{}".format(eventName)
+        _listenFunc.__name__ = "QPOOL_" + str(eventName)
         return _listenFunc
 
     def _initListenEvent(self, eventName=""):
