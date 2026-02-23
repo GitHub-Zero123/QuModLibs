@@ -122,8 +122,8 @@ class RAIIWindowESC(QRAIIDelayed):
         UnListenForEvent("OnBackButtonReleaseClientEvent", self, self.OnBackButtonReleaseClientEvent)
         UnListenForEvent("OnKeyPressInGame", self, self.OnKeyPressInGame)
 
-    def OnBackButtonReleaseClientEvent(self, args):
-        # type: (dict) -> None
+    def OnBackButtonReleaseClientEvent(self, _=None):
+        # type: (dict | None) -> None
         uiNode = self.uiNodeRef()
         if clientApi.GetTopScreen() != uiNode:
             return
