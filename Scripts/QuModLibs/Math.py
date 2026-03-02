@@ -155,21 +155,21 @@ class Vec3(object):
 
     def rotateVector(self, axis, angle):
         # type: (Vec3, float) -> Vec3
-        """ 向量旋转
+        """ 向量旋转（罗德里格斯旋转公式）
             @axis: 旋转轴(单位向量)
-            @angle: 旋转角度(欧拉角)
+            @angle: 旋转角度(欧拉角，正方向与 MC yaw 旋转方向一致：绕Y轴正角度 = 面朝Z+时向左转）
             @return: self
         """
         angleRad = math.radians(angle)
-        # 计算旋转矩阵分量
         cosTheta = math.cos(angleRad)
         sin_theta = math.sin(angleRad)
         ux, uy, uz = axis.copy().convertToUnitVector()
-        vector = self
-        # 根据旋转公式计算旋转
-        self.x = (cosTheta + (1 - cosTheta) * ux**2) * vector[0] + ((1 - cosTheta) * ux * uy - sin_theta * uz) * vector[1] + ((1 - cosTheta) * ux * uz + sin_theta * uy) * vector[2]
-        self.y = (cosTheta + (1 - cosTheta) * uy**2) * vector[1] + ((1 - cosTheta) * ux * uy + sin_theta * uz) * vector[0] + ((1 - cosTheta) * uy * uz - sin_theta * ux) * vector[2]
-        self.z = (cosTheta + (1 - cosTheta) * uz**2) * vector[2] + ((1 - cosTheta) * ux * uz - sin_theta * uy) * vector[0] + ((1 - cosTheta) * uy * uz + sin_theta * ux) * vector[1]
+        # 保存原始分量，避免 in-place 赋值污染（旧版 vector=self 无拷贝的 bug 修复）
+        ox, oy, oz = self.x, self.y, self.z
+        # 标准罗德里格斯旋转矩阵（列向量乘法 R*v），旋转方向与 MC yaw 坐标系保持一致
+        self.x = (cosTheta + (1 - cosTheta) * ux * ux) * ox + ((1 - cosTheta) * ux * uy + sin_theta * uz) * oy + ((1 - cosTheta) * ux * uz - sin_theta * uy) * oz
+        self.y = ((1 - cosTheta) * ux * uy - sin_theta * uz) * ox + (cosTheta + (1 - cosTheta) * uy * uy) * oy + ((1 - cosTheta) * uy * uz + sin_theta * ux) * oz
+        self.z = ((1 - cosTheta) * ux * uz + sin_theta * uy) * ox + ((1 - cosTheta) * uy * uz - sin_theta * ux) * oy + (cosTheta + (1 - cosTheta) * uz * uz) * oz
         return self
 
     @staticmethod
