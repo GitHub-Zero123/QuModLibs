@@ -115,12 +115,24 @@ class RAIIWindowESC(QRAIIDelayed):
         return RAIIWindowESC._Binder.creatAnnotationObj()
 
     def _loadResource(self):
+        ListenForEvent("OnBackButtonReleaseClientEvent", self, self.OnBackButtonReleaseClientEvent)
         ListenForEvent("OnKeyPressInGame", self, self.OnKeyPressInGame)
 
     def _cleanup(self):
+        UnListenForEvent("OnBackButtonReleaseClientEvent", self, self.OnBackButtonReleaseClientEvent)
         UnListenForEvent("OnKeyPressInGame", self, self.OnKeyPressInGame)
 
-    def OnKeyPressInGame(self, args={}):
+    def OnBackButtonReleaseClientEvent(self, _=None):
+        # type: (dict | None) -> None
+        uiNode = self.uiNodeRef()
+        if clientApi.GetTopScreen() != uiNode:
+            return
+        if self.bindCloseFunc:
+            return self.bindCloseFunc()
+        uiNode.SetRemove()
+
+    def OnKeyPressInGame(self, args):
+        # type: (dict) -> None
         uiNode = self.uiNodeRef()
         if args["isDown"] != "1" or clientApi.GetTopScreen() != uiNode:
             return
