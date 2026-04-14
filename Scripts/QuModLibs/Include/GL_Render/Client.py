@@ -15,12 +15,13 @@ from .SharedRes import (
     GL_MOB_QUERY_KEY,
 )
 lambda: "By Zero123"
-lambda: "TIME: 2025/4/26"
+lambda: "TIME: 2026/04/14"
 
 class STATIC_IN:
     USE_LOCAL_CACHE = False
     FULL_MOB_QUERY_FUNC = False
     MOB_QUERY_WHITE_LIST = set()
+    COMPAT_4D_MODEL = True      # 默认启用4D兼容策略
 
 class MOB_QUERYS_UPDATE_EVENTS(BaseEvent):
     """ 实体Querys节点更新事件 处于该事件下依然可以重定向修改节点数据 """
@@ -85,7 +86,27 @@ class PLAYER_RES_SERVICE(BaseService):
     _LOCAL_EFFECT_LISTEN_MAP = {}   # type: dict[str, set[function]]    # 本地效果监听映射
     _REG_LOCAL_EFFECT_FUNCNAME = set()  # 存放使用装饰器注册过的函数路径 避免热重载带来的重复定义问题
     _LOCAL_PLAYER_CACHE = {}        # type: dict[str, list]
-    _LOCAL_PLAYER_CACHE_STATIC = {}        # type: dict[str, list]
+    _LOCAL_PLAYER_CACHE_STATIC = {} # type: dict[str, list]
+    # 玩家资源缓存表
+    # {playerId: {
+    #   (1, "geometryKey"): geometryValue,
+    # }}
+    _LOCAL_PLAYER_RES_MAP_CACHE = {}    # type: dict[str, dict[object, object]]
+
+    @staticmethod
+    def WRITE_PLAYER_CACHE_MAP(playerId, resType, key, value):
+        """ 写入玩家资源缓存 """
+        if not playerId in PLAYER_RES_SERVICE._LOCAL_PLAYER_RES_MAP_CACHE:
+            PLAYER_RES_SERVICE._LOCAL_PLAYER_RES_MAP_CACHE[playerId] = {}
+        PLAYER_RES_SERVICE._LOCAL_PLAYER_RES_MAP_CACHE[playerId][(resType, key)] = value
+
+    @staticmethod
+    def READ_PLAYER_CACHE_MAP(playerId, resType, key):
+        """ 读取玩家资源缓存 """
+        data = PLAYER_RES_SERVICE._LOCAL_PLAYER_RES_MAP_CACHE.get(playerId, None)
+        if data is None:
+            return None
+        return data.get((resType, key), None)
 
     @staticmethod
     def checkAndUpdatePlayerCache(playerId, newData=[], isStatic=False):
@@ -192,6 +213,8 @@ class PLAYER_RES_SERVICE(BaseService):
             "7": self.OPT_SOUND_EFFECT,
             "8": self.OPT_PLAYER_SKIN,
         }
+        # self.cachedPlayer4DInfo = {}
+        # """ 缓存的玩家4D皮肤信息 """
         self.staticPlayerResCMD = []
         """ 静态玩家资源操作指令 """
         self._querySet = set(GL_CUSTOM_QUERY.GL_QUERYS)
@@ -223,12 +246,22 @@ class PLAYER_RES_SERVICE(BaseService):
 
     def getArgs(self, data = {}):
         return tuple(data["d"])
+
+    # TYPE_GEOMETRY = 0
+    # TYPE_ANIMATION = 1
+    # TYPE_TEXTURE = 2
+    # TYPE_MATERIAL = 3
+    # TYPE_RENDER_CONTROLLER = 4
+    # TYPE_ALL = 5
     
     def OPT_TEXTURE(self, entityId, _type, data):
         """ 纹理资源操作 """
         comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value is None:
+        if value == None:
+            if key == "default":
+                if GetEngineVersion() > (3, 8, 0):
+                    comp.ResetEntityExtraSkin(entityId, 2)
             return
         comp.AddPlayerTexture(key, value)
 
@@ -236,16 +269,29 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 模型资源操作 """
         comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value is None:
-            comp.RemovePlayerGeometry(key)
-            return
-        comp.AddPlayerGeometry(key, value)
+        if STATIC_IN.COMPAT_4D_MODEL and key == "default":
+            # 兼容4D模型资源
+            gameComp = compFactory.CreateGame(levelId)
+            if gameComp.IsOfficialSkin(entityId):
+                return
+        if value == None:
+            if key == "default":
+                if GetEngineVersion() > (3, 8, 0):
+                    comp.ResetEntityExtraSkin(entityId, 0)
+            else:
+                comp.RemovePlayerGeometry(key)
+        else:
+            comp.AddPlayerGeometry(key, value)
+        PLAYER_RES_SERVICE.WRITE_PLAYER_CACHE_MAP(entityId, 1, key, value)
 
     def OPT_MATERIAL(self, entityId, _type, data):
         """ 材质资源操作 """
         comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value is None:
+        if value == None:
+            if key == "default":
+                if GetEngineVersion() > (3, 8, 0):
+                    comp.ResetEntityExtraSkin(entityId, 3)
             return
         comp.AddPlayerRenderMaterial(key, value)
 
@@ -263,7 +309,7 @@ class PLAYER_RES_SERVICE(BaseService):
             # 是动画控制器资源
             comp.AddPlayerAnimationController(key, value)
             return
-        if value is None:
+        if value == None:
             comp.RemovePlayerAnimationController(key)
             return
         print("无效的动画资源: " + str(value))
@@ -272,7 +318,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 粒子资源操作 """
         comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value is None:
+        if value == None:
             return
         comp.AddPlayerParticleEffect(key, value)
 
@@ -280,7 +326,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 渲染控制器资源操作 """
         comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value is None:
+        if value == None:
             comp.RemovePlayerRenderController(key)
             return
         comp.AddPlayerRenderController(key, value)
@@ -289,7 +335,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ animate节点资源操作 """
         comp = compFactory.CreateActorRender(entityId)
         key, value, _autoReplace = self.getArgs(data)
-        if value is None:
+        if value == None:
             return
         if not _autoReplace:
             comp.AddPlayerScriptAnimate(key, value)
@@ -300,7 +346,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 音效资源操作 """
         comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value is None:
+        if value == None:
             return
         comp.AddPlayerSoundEffect(key, value)
 
@@ -308,7 +354,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 玩家皮肤资源操作 """
         value = self.getArgs(data)[0]
         comp = compFactory.CreateModel(playerId)
-        if value is None:
+        if value == None:
             comp.ResetSkin()
             return
         comp.SetSkin(value)
@@ -376,7 +422,12 @@ class PLAYER_RES_SERVICE(BaseService):
             comp.AddPlayerAnimation(key, anim)
 
     @BaseService.Listen("AddPlayerCreatedClientEvent")
-    def AddPlayerCreatedClientEvent(self, args={}):
+    def _AddPlayerCreatedClientEvent(self, args):
+        """ 玩家异步渲染事件 """
+        return self.AddPlayerCreatedClientEvent(args)
+
+    def AddPlayerCreatedClientEvent(self, args):
+        # type: (dict) -> None
         """ 玩家异步渲染事件 """
         playerId = args["playerId"]
         comp = compFactory.CreateModAttr(playerId)
@@ -390,6 +441,16 @@ class PLAYER_RES_SERVICE(BaseService):
         comp.RegisterUpdateFunc(self.__class__.GL_RES_KEY, self.AUTO_RES_UPDATE)
         comp.RegisterUpdateFunc(self.__class__.GL_REST_ANIM_KEY, self.GL_REST_ANIM)
         comp.RegisterUpdateFunc(self.__class__.GL_QUERY_KEY, self.GL_QUERY_UPDATE)
+    
+    # @BaseService.Listen("UpdatePlayerSkinClientEvent")
+    # def UpdatePlayerSkinClientEvent(self, args={}):
+    #     if not STATIC_IN.COMPAT_4D_MODEL:
+    #         return
+    #     playerId = args["playerId"]
+        # gameComp = compFactory.CreateGame(levelId)
+        # skinState = gameComp.IsOfficialSkin(playerId)
+        # self.cachedPlayer4DInfo[playerId] = skinState
+        # print("[GLRender] 玩家4D皮肤状态更新: {} => {}".format(playerId, skinState))
 
     @BaseService.Listen("RemovePlayerAOIClientEvent")
     def RemovePlayerAOIClientEvent(self, args={}):
@@ -479,6 +540,8 @@ def GL_GCPlayer(entityId):
         del PLAYER_RES_SERVICE._LOCAL_PLAYER_CACHE[entityId]
     if entityId in PLAYER_RES_SERVICE._LOCAL_PLAYER_CACHE_STATIC:
         del PLAYER_RES_SERVICE._LOCAL_PLAYER_CACHE_STATIC[entityId]
+    if entityId in PLAYER_RES_SERVICE._LOCAL_PLAYER_RES_MAP_CACHE:
+        del PLAYER_RES_SERVICE._LOCAL_PLAYER_RES_MAP_CACHE[entityId]
 
 lambda: "GL_RENDER By Zero123"
 print("[Qu.GLRender] 客户端已加载")
