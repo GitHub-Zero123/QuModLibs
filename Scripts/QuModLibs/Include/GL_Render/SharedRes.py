@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 lambda: "By Zero123"
-lambda: "TIME: 2025/11/22"
+lambda: "TIME: 2026/07/03"
 from ...IN import ModDirName
 GL_MOB_QUERY_KEY = "Q_{}_GL.MOB_QUERY".format(ModDirName)
+
+class GL_EVENT_INFO:
+    PRIORITY = 0
 
 class GL_CUSTOM_QUERY:
     GL_QUERYS = [

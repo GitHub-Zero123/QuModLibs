@@ -12,10 +12,11 @@ from .SharedRes import (
     GL_CUSTOM_QUERY,
     JSONRenderData,
     GL_RES_OPT,
+    GL_EVENT_INFO,
     GL_MOB_QUERY_KEY,
 )
 lambda: "By Zero123"
-lambda: "TIME: 2026/04/14"
+lambda: "TIME: 2026/07/03"
 
 class STATIC_IN:
     USE_LOCAL_CACHE = False
@@ -421,7 +422,9 @@ class PLAYER_RES_SERVICE(BaseService):
             anim = playerData[key]
             comp.AddPlayerAnimation(key, anim)
 
-    @BaseService.Listen("AddPlayerCreatedClientEvent")
+    @BaseService.Listen(CustomEngineEvent(
+        "Minecraft", "Engine", "AddPlayerCreatedClientEvent", GL_EVENT_INFO.PRIORITY
+    ))
     def _AddPlayerCreatedClientEvent(self, args):
         """ 玩家异步渲染事件 """
         return self.AddPlayerCreatedClientEvent(args)
