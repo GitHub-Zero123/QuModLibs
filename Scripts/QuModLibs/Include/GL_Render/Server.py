@@ -288,10 +288,10 @@ class GL_PLAYER_RES:
     def restDefaultSkin(self, restMat = False):
         """ 重置默认纹理模型 """
         self.addOptPass(
-            GL_RES_OPT.GL_TEXTURE(GL_PLAYER_RES.DEFAULT_KEY, GL_PLAYER_RES.DEFAULT_TEXTURE)
+            GL_RES_OPT.GL_TEXTURE(GL_PLAYER_RES.DEFAULT_KEY, None)
         )
         self.addOptPass(
-            GL_RES_OPT.GL_GEOMETRY(GL_PLAYER_RES.DEFAULT_KEY, GL_PLAYER_RES.DEFAULT_GEO)
+            GL_RES_OPT.GL_GEOMETRY(GL_PLAYER_RES.DEFAULT_KEY, None)
         )
         # 由于网易MC魔改了玩家资源 此处的默认材质不一定符合实际默认材质 选择性启用
         if restMat:

@@ -99,7 +99,6 @@ class GL_RES_OPT:
         def __init__(self, key, value):
             GL_KV_RES.__init__(self, key, value)
             self._INSTRUCT_ID = 0
-            self.CAN_NOT_NULL(value)
 
     class GL_GEOMETRY(GL_KV_RES):
         """ 模型资源 """
@@ -112,7 +111,6 @@ class GL_RES_OPT:
         def __init__(self, key, value):
             GL_KV_RES.__init__(self, key, value)
             self._INSTRUCT_ID = 2
-            self.CAN_NOT_NULL(value)
 
     class GL_ANIM(GL_KV_RES):
         """ 动画/控制器资源 """

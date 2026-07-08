@@ -259,7 +259,7 @@ class PLAYER_RES_SERVICE(BaseService):
         """ 纹理资源操作 """
         comp = compFactory.CreateActorRender(entityId)
         key, value = self.getArgs(data)
-        if value == None:
+        if value is None:
             if key == "default":
                 if GetEngineVersion() > (3, 8, 0):
                     comp.ResetEntityExtraSkin(entityId, 2)
@@ -275,7 +275,7 @@ class PLAYER_RES_SERVICE(BaseService):
             gameComp = compFactory.CreateGame(levelId)
             if gameComp.IsOfficialSkin(entityId):
                 return
-        if value == None:
+        if value is None:
             if key == "default":
                 if GetEngineVersion() > (3, 8, 0):
                     comp.ResetEntityExtraSkin(entityId, 0)
